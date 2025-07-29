@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Account Settings</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" >
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link th:href="@{/css/homeStyle.css}" rel="stylesheet">
+
+</head>
+<body>
+
+<!-- Header -->
+<nav class="navbar navbar-dark bg-dark px-4">
+  <span class="navbar-brand mb-0 h5">THE ZEPHYR HOTEL</span>
+  <div class="d-flex align-items-center text-white">
+    <i class="bi bi-person-circle me-2"></i>
+    Your account
+  </div>
+</nav>
+
+<!-- Account Settings Section -->
+<div class="container py-5">
+  <h3 class="fw-bold mb-2">Accounting settings</h3>
+  <p class="text-muted mb-4">Manage your account setting for effective use</p>
+  <a th:if="${section != 'dashboard'}" th:href="@{/account}" class="text-decoration-none d-inline-flex align-items-center">
+    <i class="bi bi-arrow-left me-1"></i> Back to Account
+  </a>
+  <a th:if="${section == 'dashboard'}" th:href="@{/}" class="text-decoration-none d-inline-flex align-items-center">
+    <i class="bi bi-arrow-left me-1"></i> Back to Homepage
+  </a>
+</div>
+
+<!--Message and Error-->
+<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}">
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${message}">
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<!--Related section-->
+<div th:replace="fragments/account :: ${section}"></div>
+
+
+
+
+<script th:src="@{/js/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+
+</html>

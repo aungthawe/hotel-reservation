@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Zypher Hotel</title>
+
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" >
+  <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
+  <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+  <link th:href="@{/css/homeStyle.css}" rel="stylesheet">
+
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<!--alert for registerations-->
+<div class="container-fluid my-3">
+
+  <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span>You have been successfully Logged out</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${message}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <span th:text="${error}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+
+<div th:replace="fragments/header :: herocarousel"></div>
+
+<div th:replace="fragments/common-fragment :: searchbox"></div>
+
+<div th:replace="fragments/common-fragment :: searchresult"></div>
+
+<div th:replace="fragments/common-fragment :: offers"></div>
+
+<div th:replace="fragments/common-fragment :: explore"></div>
+
+<div th:replace="fragments/common-fragment :: reviews"></div>
+
+<div th:replace="fragments/common-fragment :: reviewform"></div>
+
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<!-- Load JavaScript files -->
+<script src="/js/header.js"></script>
+<script src="/js/common.js"></script>
+</body>
+</html>

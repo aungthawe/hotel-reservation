@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Room</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+
+<!--edit room-->
+<div class="container my-5">
+    <h2 class="mb-4">Edit Room</h2>
+    <a th:href="@{/a/home}" class="btn btn-secondary">Back To Homepage</a>
+
+
+    <form action="/rooms/update" method="post">
+        <input type="hidden" name="id" th:value="${room.id}" />
+
+        <div class="mb-3">
+            <label class="form-label">Room Number</label>
+            <input type="text" class="form-control" id="roomNumber" name="roomNumber" th:value="${room.roomNumber}" onkeyup="checkRoomNumber()" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Room Type</label>
+            <select name="roomType" class="form-select" required>
+                <option th:each="type : ${session.roomTypes}"
+                        th:value="${type.typeName}"
+                        th:selected="${type.typeName == room.roomType.typeName}"
+                        th:text="${type.typeName}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Price</label>
+            <input type="number" class="form-control" name="price" th:value="${room.price}" step="0.01" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Capacity</label>
+            <input type="number" class="form-control" name="capacity" th:value="${room.capacity}" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <input type="text" class="form-control" name="status" th:value="${room.status}" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Availability</label>
+            <select name="availability" class="form-select">
+                <option th:value="true" th:selected="${room.availability} == true">Available</option>
+                <option th:value="false" th:selected="${room.availability} == false">Not Available</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" name="description" rows="3"
+                      th:text="${room.description}"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Features</label>
+            <input type="text" class="form-control" name="features" th:value="${room.features}" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Discount (%)</label>
+            <input type="number" class="form-control" name="discount" th:value="${room.discount}" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a th:href="@{/a/home}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<script src="/js/admin/admin.js"></script>
+</body>
+</html>

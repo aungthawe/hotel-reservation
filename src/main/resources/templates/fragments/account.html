@@ -1,0 +1,351 @@
+<htmL xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+
+  <section th:fragment="dashboard" class="py-4">
+    <div class="container">
+      <div class="row">
+<!--        personal-->
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex">
+            <div class="me-3 fs-2">👤</div>
+            <div>
+              <h5 class="card-title mb-1">Personal details</h5>
+              <p class="card-text small">Update your information and find out how it’s used.</p>
+              <a href="/account?section=personal" class="link-primary small">Manage personal details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+<!--        payment-->
+      <div class="col-md-6 mb-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body d-flex">
+              <div class="me-3 fs-2">💳</div>
+              <div>
+                <h5 class="card-title mb-1">Payment Method</h5>
+                <p class="card-text small">Manage your saved cards or update payment preferences.</p>
+                <a href="/account?section=payment" class="link-primary small">Manage payment options</a>
+              </div>
+            </div>
+          </div>
+        </div>
+<!--        &lt;!&ndash;      security&ndash;&gt;-->
+<!--      <div class="col-md-6 mb-4">-->
+<!--        <div class="card h-100 shadow-sm">-->
+<!--          <div class="card-body d-flex">-->
+<!--            <div class="me-3 fs-2">🔒</div>-->
+<!--            <div>-->
+<!--              <h5 class="card-title mb-1">Security</h5>-->
+<!--              <p class="card-text small">Change your security settings, set up secure authentication.</p>-->
+<!--              <a href="#" class="link-primary small">Manage account security</a>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--&lt;!&ndash;    privacy&ndash;&gt;-->
+<!--      <div class="col-md-6 mb-4">-->
+<!--        <div class="card h-100 shadow-sm">-->
+<!--          <div class="card-body d-flex">-->
+<!--            <div class="me-3 fs-2">✅</div>-->
+<!--            <div>-->
+<!--              <h5 class="card-title mb-1">Privacy</h5>-->
+<!--              <p class="card-text small">Exercise your privacy rights and control how your data is used.</p>-->
+<!--              <a href="#" class="link-primary small">Manage privacy</a>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--&lt;!&ndash;email notification&ndash;&gt;-->
+<!--      <div class="col-md-6 mb-4">-->
+<!--        <div class="card h-100 shadow-sm">-->
+<!--          <div class="card-body d-flex">-->
+<!--            <div class="me-3 fs-2">🔔</div>-->
+<!--            <div>-->
+<!--              <h5 class="card-title mb-1">Email notification</h5>-->
+<!--              <p class="card-text small">Decide what you want to be notified about.</p>-->
+<!--              <a href="#" class="link-primary small">Manage notification</a>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--history-->
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex">
+            <div class="me-3 fs-2">🗂️</div>
+            <div>
+              <h5 class="card-title mb-1">History</h5>
+              <p class="card-text small">View your history in Hotel Zephyr.</p>
+              <a href="/account?section=history" class="link-primary small">View history</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <section th:fragment="personal" class="py-4">
+    <div class="container">
+      <h5 class="fw-bold mb-3">Your Reservation History</h5>
+      <div class="row justify-content-center">
+
+          <div class="card shadow-sm">
+            <div class="card-body d-flex">
+              <div class="me-3 fs-2">👤</div>
+              <div class="w-100">
+                <h5 class="card-title mb-3">Your Personal Details</h5>
+
+                <div class="mb-2">
+                  <strong>Full Name:</strong>
+                  <span th:text="${user.name}">John Doe</span>
+                </div>
+
+                <div class="mb-2">
+                  <strong>Email:</strong>
+                  <span th:text="${user.email}">john.doe@example.com</span>
+                </div>
+
+                <div class="mb-2">
+                  <strong>Phone:</strong>
+                  <span th:text="${user.phone}">+1 234 567 890</span>
+                </div>
+
+                <div class="mb-2">
+                  <strong>NRC:</strong>
+                  <span th:text="${customer.nrc}">12/ABC(N)123456</span>
+                </div>
+
+                <div class="mb-2">
+                  <strong>Address:</strong>
+                  <span th:text="${customer.address}">Yangon, Myanmar</span>
+                </div>
+
+                <div class="text-start mt-3">
+                  <a href="/account/edit" class="btn btn-outline-primary">Edit Details</a>
+                  <a href="/logout" class="btn btn-outline-danger">Logout</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section th:fragment="payment" class="py-4">
+    <div class="container">
+      <h5 class="fw-bold mb-3">Your Payment Info</h5>
+      <div id="paymentcardinfo" class="row">
+
+        <!-- List of Existing Cards -->
+        <div class="col-md-6 mb-4">
+          <div th:each="card : ${paymentCards}" class="card shadow-sm p-3 mb-3 bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="fw-bold" th:text="${card.type}">Visa</div>
+                <div class="text-muted small" th:text="${card.cardHolderName}"></div>
+                <div class="text-muted small" th:text="${card.maskedCardNumber}">**** **** **** 1234</div>
+                <div class="text-muted small" >Exp:<span th:text="${card.expiryDate}"></span></div>
+              </div>
+              <div class="fs-2 text-primary">💳</div>
+            </div>
+          </div>
+
+          <!-- Toggle Button -->
+          <button class="btn btn-outline-secondary btn-sm mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#addCardForm">
+            Add New Card
+          </button>
+        </div>
+
+        <!-- Add Card Form (Collapsible) -->
+        <div class="collapse col-md-6" id="addCardForm">
+          <div class="card card-body shadow-sm">
+            <form th:action="@{/payment/add}" method="post">
+              <div class="mb-3">
+                <label class="form-label">Card Holder Name</label>
+                <input type="text" class="form-control" name="cardHolderName" required>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Card Number</label>
+                <input type="text" class="form-control" name="cardNumber" maxlength="16" required>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Expiry Date (MM/YY)</label>
+                <input type="text" class="form-control" name="expiryDate" placeholder="MM/YY" required>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Card Type</label>
+                <select class="form-select" name="type" required>
+                  <option value="" disabled selected>Select type</option>
+                  <option value="VISA">VISA</option>
+                  <option value="MasterCard">MasterCard</option>
+                  <option value="PayPal">PayPal</option>
+                  <option value="AMEX">AMEX</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100">Save Card</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="paymenthistory">
+          <h5 class="fw-bold mb-4">Payment History</h5>
+
+          <div class="row row-cols-1 row-cols-md-2 g-4">
+            <div class="col" th:each="payment : ${payments}">
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="fw-bold mb-1">
+                      <span th:text="${payment.paymentCard.type}">VISA</span>
+                    </h6>
+                    <p class="mb-1 small text-muted">
+                      Card: <span th:text="${payment.paymentCard.maskedCardNumber}">**** **** **** 1234</span>
+                    </p>
+                    <p class="mb-1 small text-muted">
+                      Date: <span th:text="${payment.paymentTime}">12 Jul 2025</span>
+                    </p>
+                    <p class="mb-1 small text-muted">
+                      Amount: <strong th:text="${payment.amount + ' $'}">200 $</strong>
+                    </p>
+                    <span th:if="${payment.status == 'SUCCESS'}" class="badge bg-success">Completed</span>
+                    <span th:if="${payment.status != 'SUCCESS'}" class="badge bg-warning text-dark">Pending</span>
+                  </div>
+
+                  <div class="fs-2 text-primary ms-2">
+                    💳
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div th:if="${payments == null or payments.isEmpty()}" class="text-muted mt-3">
+            <p>No payments found yet.</p>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <section th:fragment="security" class="py-4">
+    <p> This is security</p>
+  </section>
+
+  <section th:fragment="notifications" class="py-4">
+    <p> This is notification</p>
+  </section>
+
+  <section th:fragment="privacy" class="py-4">
+    <p> This is privacy</p>
+  </section>
+
+<!--  history -->
+  <section th:fragment="history" class="py-4">
+    <div class="container">
+      <h5 class="fw-bold mb-3">Your Reservation History</h5>
+
+      <div th:if="${#lists.isEmpty(reservations)}">
+        <p class="text-muted">You haven’t made any reservations yet.</p>
+      </div>
+
+      <div th:if="${!#lists.isEmpty(reservations)}">
+        <table class="table table-bordered table-hover">
+          <thead class="table-dark">
+          <tr>
+            <th>Room</th>
+            <th>Check-In</th>
+            <th>Check-Out</th>
+            <th>Date of Reservation</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="res : ${reservations}">
+            <td th:text="${res.room.roomNumber + ' - ' + res.room.roomType.typeName}"></td>
+            <td th:text="${res.checkinDate}"></td>
+            <td th:text="${res.checkoutDate}"></td>
+            <td th:text="${res.reservationDate}"></td>
+            <td th:text="${res.totalAmount} + ' USD'"></td>
+            <td th:if="${res.totalAmount == (res.payment != null ? res.payment.amount : 0)}" class="text-success">Paid</td>
+            <td th:if="${res.totalAmount != (res.payment != null ? res.payment.amount : 0)}" class="text-danger">Unpaid</td>
+            <td>
+              <span th:if="${editableMap[res.id]}">
+                <a th:href="@{/reservation/edit/{id}(id=${res.id})}" class="btn btn-warning btn-sm">Modify</a>
+                <a th:href="@{/reservation/cancel/{id}(id=${res.id})}" class="btn btn-danger btn-sm">Cancel</a>
+              </span>
+              <span th:unless="${editableMap[res.id]}">
+                <small class="text-muted">Modification unavailable</small>
+              </span>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section th:fragment="edit" class="py-4">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <div class="me-2 fs-2">📝</div>
+                <h5 class="card-title mb-0">Edit Your Personal Data</h5>
+              </div>
+
+              <form method="post" th:action="@{/account/edit}" th:object="${user}">
+                <div class="mb-3">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" th:field="*{name}" class="form-control" placeholder="Enter full name" required />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Email</label>
+                  <input type="email" th:field="*{email}" class="form-control" placeholder="Enter email" required />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Phone</label>
+                  <input type="text" th:field="*{phone}" class="form-control" placeholder="Enter phone" required />
+                </div>
+
+                <div th:object="${customer}">
+                  <div class="mb-3">
+                    <label class="form-label">NRC</label>
+                    <input type="text" th:field="*{nrc}" class="form-control" placeholder="Enter NRC" required />
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Address</label>
+                    <input type="text" th:field="*{address}" class="form-control" placeholder="Enter address" required />
+                  </div>
+                </div>
+
+                <div class="text-end">
+                  <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Zypher Hotel</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link th:href="@{/css/homeStyle.css}" rel="stylesheet">
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<!--alert-->
+<div class="container-fluid my-3">
+
+  <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span>You have been successfully Logged out</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
+  <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${session.message}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <span th:text="${session.error}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
+</div>
+
+<div th:replace="fragments/header :: herocarousel"></div>
+
+<!--admin section-->
+<div th:replace="fragments/admin-fragment :: adminsection"></div>
+
+<div th:replace="fragments/common-fragment :: searchbox"></div>
+
+<div th:replace="fragments/common-fragment :: searchresult"></div>
+
+<div th:replace="fragments/admin-fragment :: staff"></div>
+
+<div th:replace="fragments/admin-fragment :: reportlist"></div>
+
+<div th:replace="fragments/common-fragment :: offers"></div>
+
+<div th:replace="fragments/common-fragment :: explore"></div>
+
+<div th:replace="fragments/common-fragment :: reviews"></div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/admin/chart.js"></script>
+<script src="/js/header.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/admin/admin.js"></script>
+</body>
+</html>

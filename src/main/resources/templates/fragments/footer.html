@@ -1,0 +1,21 @@
+<!-- templates/fragments/footer.html -->
+<footer th:fragment="footer" class="bg-dark text-white py-4" >
+  <div class="container d-flex justify-content-between">
+    <div>
+      <h2>The Zephyr Hotel</h2>
+      <p>28483 Yadana Rd. Bago, CA BT765</p>
+      <p>+95 9878678678</p>
+      <p>hotel_zephyr@gmail.com</p>
+    </div>
+    <div>
+      <a href="about.html" class="text-white text-decoration-none">About Us</a><br>
+      <a th:href="@{/contact}" class="text-white text-decoration-none">Contact Us</a><br>
+      <a th:href="@{/terms}" class="text-white text-decoration-none">Terms & Conditions</a>
+    </div>
+    <div>
+      <a href="#" class="text-white text-decoration-none">Facebook</a><br>
+      <a href="#" class="text-white text-decoration-none">Instagram</a><br>
+      <a href="#" class="text-white text-decoration-none">Pinterest</a>
+    </div>
+  </div>
+</footer>

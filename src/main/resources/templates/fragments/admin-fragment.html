@@ -1,0 +1,451 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+
+<!-- Admin Dashboard Fragment -->
+<section  th:fragment="adminsection" th:if="${isadmin}" style="background-color:#002244;" >
+
+
+    <!-- Add Room Modal -->
+    <div class="modal fade text-secondary" id="addRoomModal" tabindex="-1" aria-labelledby="addRoomModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addRoomModalLabel">Add New Room</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/rooms/addRoom}" th:object="${roomtosave}" method="post">
+                        <div class="mb-3">
+                            <label for="roomNumber" class="form-label">Room Number</label>
+                            <input type="text" class="form-control" id="roomNumber" th:field="*{roomNumber}" onkeyup="checkRoomNumber()" required >
+                            <span id="roomNumberMessage"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label for="roomType" class="form-label">Room Type</label>
+                            <select class="form-control" id="roomType" th:field="*{roomType}" required>
+                                <option value="">Select Type</option>
+                                <option th:each="type : ${session.roomTypes}" th:value="${type.id}" th:text="${type.typeName}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" class="form-control" id="price" th:field="*{price}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="capacity" class="form-label">Capacity</label>
+                            <input type="number" class="form-control" id="capacity" th:field="*{capacity}" required>
+                        </div>
+                        <button type="button" id="nextButton" class="btn btn-secondary" onclick="showNextFields()">Next</button>
+                        <div id="optionalFields" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label">Availability</label>
+                                <select class="form-control" id="availability" th:field="*{availability}">
+                                    <option value="1">Available</option>
+                                    <option value="0">Not Available</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <input type="text" class="form-control" id="status" th:field="*{status}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" th:field="*{description}"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="features" class="form-label">Features</label>
+                                <input type="text" class="form-control" id="features" th:field="*{features}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="discount" class="form-label">Discount (%)</label>
+                                <input type="number" class="form-control" id="discount" th:field="*{discount}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Upload Image</label>
+                                <input type="file" class="form-control" id="image" th:field="*{image}">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success" id="saveroombtn">Save Room</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3  p-3">
+        <h3 class="text-center text-light">Admin Dashboard</h3>
+    </div>
+
+    <div class="d-flex justify-content-center gap-2 mt-2">
+        <button  onclick="showSection('rooms')" class="btn btn-custom" >Rooms</button>
+<!--        <button  onclick="showSection('dashboard')" class="btn btn-custom" >Dashboard</button>-->
+        <button  onclick="showSection('guest')" class="btn btn-custom" >Reservations</button>
+        <button  onclick="showSection('customer')" class="btn btn-custom" >Guests</button>
+    </div>
+        <!--room,reservation and guests-->
+    <div class="container d-flex flex-column justify-content-center align-items-center gap-5 ">
+
+        <!-- Rooms Section -->
+        <div class="sectionme mt-4 mb-4"  id="rooms">
+            <div class="d-flex justify-content-between mt-3">
+                <div>
+                    <button class="btn btn-custom me-2" onclick="showRooms('all')">All Rooms <span class="badge bg-dark" id="totalRooms" th:text="${allRooms.size()}"></span></button>
+                    <button class="btn btn-custom" onclick="showRooms('available')">Available Rooms <span class="badge bg-light text-dark" th:text="${availableRooms.size()}">26</span></button>
+                    <button class="btn btn-custom ms-2" onclick="showRooms('booked')">Booked Room <span class="badge bg-dark" th:text="${bookedRooms.size()}">94</span></button>
+                </div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">Add New Room</button>
+            </div>
+            <div class="table-container mt-3 rounded-4">
+                <table class="table rounded-4">
+                    <thead>
+                    <tr class="table-primary">
+                        <th>Room Number</th>
+                        <th>Bed Type</th>
+                        <th>Capacity</th>
+                        <th>Room Facility</th>
+                        <th>Price Per Night</th>
+                        <th>Discount Rate</th>
+                        <th>Room Status</th>
+                        <th th:if="${isadmin}">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="allRoomsTable">
+                     <tr th:each="rooms : ${allRooms}" th:id="'roomRow' + ${rooms.id}">
+                        <td th:text="${rooms.roomNumber}"></td>
+                        <td th:text="${rooms.roomType.typeName}"></td>
+                        <td th:text="${rooms.capacity}"></td>
+                        <td th:text="${rooms.features}"></td>
+                        <td th:text="${rooms.price}"></td>
+                        <td th:text="${rooms.discount != null ? rooms.discount + '%' : 'None'}"
+                            th:style="${rooms.discount == null ? 'color:red' : 'color:green'}"></td>
+                        <td th:text="${rooms.status}"
+                            th:style="${rooms.status == 'Clean' ? 'color:green' : (rooms.status == 'Under Maintenance' ? 'color:orange' : 'color:red')}"></td>
+                         <td th:if="${isadmin}">
+                             <a th:href="@{'/rooms/edit/' + ${rooms.id}}" class="btn btn-primary">Edit</a>
+                             <button th:attr="onclick='deleteRoom(' + ${rooms.id} + ')'" class="btn btn-danger">Delete</button>
+                         </td>
+                     </tr>
+                    </tbody>
+
+                    <tbody id="availableRoomsTable" style="display: none;">
+                    <tr th:each="rooms : ${availableRooms}" th:id="'roomRow' + ${rooms.id}">
+                        <td th:text="${rooms.roomNumber}"></td>
+                        <td th:text="${rooms.roomType.typeName}"></td>
+                        <td th:text="${rooms.capacity}"></td>
+                        <td th:text="${rooms.features}"></td>
+                        <td th:text="${rooms.price}"></td>
+                        <td th:text="${rooms.discount != null ? rooms.discount + '%' : 'None'}"
+                            th:style="${rooms.discount == null ? 'color:red' : 'color:green'}"></td>
+                        <td th:text="${rooms.status}"
+                            th:style="${rooms.status == 'Clean' ? 'color:green' : (rooms.status == 'Under Maintenance' ? 'color:orange' : 'color:red')}"></td>
+                        <td th:if="${isadmin}" style="display: none">
+                            <a data-bs-toggle="modal" data-bs-target="#editRoomModal" class="btn btn-primary">Edit</a>
+                            <button th:attr="onclick='deleteRoom(' + ${rooms.id} + ')'" class="btn btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                    </tbody>
+
+                    <tbody id="bookedRoomsTable" style="display: none;">
+                    <tr th:each="rooms : ${bookedRooms}" th:id="'roomRow' + ${rooms.id}">
+                        <td th:text="${rooms.roomNumber}"></td>
+                        <td th:text="${rooms.roomType.typeName}"></td>
+                        <td th:text="${rooms.capacity}"></td>
+                        <td th:text="${rooms.features}"></td>
+                        <td th:text="${rooms.price}"></td>
+                        <td th:text="${rooms.discount != null ? rooms.discount + '%' : 'None'}"
+                            th:style="${rooms.discount == null ? 'color:red' : 'color:green'}"></td>
+                        <td th:text="${rooms.status}"
+                            th:style="${rooms.status == 'Clean' ? 'color:green' : (rooms.status == 'Under Maintenance' ? 'color:orange' : 'color:red')}"></td>
+                        <td th:if="${isadmin}" style="display: none">
+                            <a data-bs-toggle="modal" data-bs-target="#editRoomModal" class="btn btn-primary">Edit</a>
+                            <button th:attr="onclick='deleteRoom(' + ${rooms.id} + ')'" class="btn btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div class="sectionme mt-4 mb-4 "  id="dashboard">
+            <div class="d-flex justify-content-between mt-3">
+                <div class="d-flex">
+                    <div class="btn btn-custom me-2 stats-box dark-blue">Today Check-In <span class="badge bg-light text-dark">30</span></div>
+                    <div class="btn btn-custom me-2 stats-box light-blue">Today Check-Out <span class="badge bg-dark">20</span></div>
+                    <div class="btn btn-custom me-2 stats-box dark-blue">Total In-Hotel <span class="badge bg-light text-dark">89</span></div>
+                    <div class="btn btn-custom me-2 stats-box light-blue">Total Available Room <span class="badge bg-dark">26</span></div>
+                    <div class="btn btn-custom stats-box dark-blue">Total Occupied Room <span class="badge bg-light text-dark">90</span></div>
+                </div>
+                <div>Friday, December 12, 2024</div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <h5>Room Status</h5>
+                    <div class="d-flex justify-content-between">
+                        <div class="stats-box light-blue p-3 rounded-4">
+                            <p>Occupied Room <strong>90</strong></p>
+                            <p>Clean <strong>50</strong></p>
+                            <p>Dirty <strong>10</strong></p>
+                            <p>Inspected <strong>30</strong></p>
+                        </div>
+                        <div class="stats-box dark-blue p-3 rounded-4">
+                            <p>Available Room <strong>26</strong></p>
+                            <p>Clean <strong>20</strong></p>
+                            <p>Dirty <strong>2</strong></p>
+                            <p>Inspected <strong>4</strong></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5>Occupancy Statistics</h5>
+                    <canvas id="occupancyChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- reservation Section -->
+        <div class="sectionme mt-4 mb-4 "  id="guest">
+<!--            <div class="d-flex justify-content-start gap-1">-->
+<!--                <input type="text" class="form-control mb-3 stats-box btn-custom" placeholder="Search by Room ID">-->
+<!--                <input type="text" class="form-control mb-3 stats-box btn-custom" placeholder="Search by Reservation Date">-->
+<!--                <input type="text" class="form-control mb-3 stats-box btn-custom" placeholder="Search by Customer's Name">-->
+<!--            </div>-->
+            <div class="table-container mt-3 rounded-4">
+                <table class="table rounded-4">
+                    <thead>
+                    <tr class="table-primary">
+                        <th>Room</th>
+                        <th>Name</th>
+                        <th>Check-In</th>
+                        <th>Check-Out</th>
+                        <th>Date of Reservation</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="res : ${reservations}">
+                        <td th:text="${res.room.roomNumber + ' - ' + res.room.roomType.typeName}"></td>
+                        <td th:text="${res.customer.user.name}"></td>
+                        <td th:text="${res.checkinDate}"></td>
+                        <td th:text="${res.checkoutDate}"></td>
+                        <td th:text="${res.reservationDate}"></td>
+                        <td th:text="${res.totalAmount} + ' USD'"></td>
+                        <td th:if="${res.totalAmount == (res.payment != null ? res.payment.amount : 0)}" class="text-success">Paid</td>
+                        <td th:if="${res.totalAmount != (res.payment != null ? res.payment.amount : 0)}" class="text-danger">Unpaid</td>
+                        <td>
+              <span th:if="${editableMap[res.id]}">
+                <a th:href="@{/a/reservation/edit/{id}(id=${res.id})}" class="btn btn-warning btn-sm">Modify</a>
+                <a th:href="@{/a/reservation/cancel/{id}(id=${res.id})}" class="btn btn-danger btn-sm">Cancel</a>
+              </span>
+                            <span th:unless="${editableMap[res.id]}">
+                <small class="text-muted">Modification unavailable</small>
+              </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!--  customer section-->
+        <div class="sectionme mt-4 mb-4" id="customer">
+            <div class="d-flex justify-content-start gap-1">
+                <input type="text" class="form-control mb-3 stats-box btn-custom" placeholder="Search by NRC">
+                <input type="text" class="form-control mb-3 stats-box btn-custom" placeholder="Search by Address">
+                <input type="text" class="form-control mb-3 stats-box btn-custom" placeholder="Search by Customer's Name">
+            </div>
+            <div class="table-container mt-3 rounded-4">
+                <table class="table rounded-4">
+                    <thead>
+                    <tr class="table-primary">
+                        <th>Customer ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>NRC</th>
+                        <th>Address</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="customer : ${customers}">
+                        <td th:text="${customer.id}"></td>
+                        <td th:text="${customer.user.name}"></td>
+                        <td th:text="${customer.user.email}"></td>
+                        <td th:text="${customer.user.phone}"></td>
+                        <td th:text="${customer.nrc}"></td>
+                        <td th:text="${customer.address}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--for making a staff-->
+<section th:fragment="staff" th:if="${isadmin}" class="container my-4">
+    <h4 class="mb-3">Assign Staff</h4>
+
+    <div class="table-container">
+        <table class="table table-rounded ">
+            <thead class="table-primary">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.name}">Name</td>
+                <td th:text="${user.email}">Email</td>
+                <td th:text="${user.phone}">Phone</td>
+                <td>
+                    <span class="badge bg-success" th:if="${user.role == 'manager'}">Manager</span>
+                    <span class="badge bg-primary" th:if="${user.role == 'staff'}">Staff</span>
+                    <span class="badge bg-secondary" th:if="${user.role == 'customer'}">Customer</span>
+                </td>
+                <td>
+                    <form th:action="@{/a/assignStaff}" method="post" th:if="${user.role != 'staff' and user.role != 'manager'}">
+                        <input type="hidden" name="userId" th:value="${user.id}" />
+                        <button class="btn btn-success btn-sm" type="submit">Make Staff</button>
+                    </form>
+                    <span th:if="${user.role == 'staff' or user.role == 'manager'}" class="text-muted">Already Staff</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 class="mb-4">Staff Members</h3>
+
+    <div th:if="${#lists.isEmpty(staffs)}" class="alert alert-warning">
+        No staff members available.
+    </div>
+<!--staff list-->
+    <div  th:if="${!#lists.isEmpty(staffs)}">
+        <table class="table table-primary">
+            <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Department</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="staff : ${staffs}">
+                <td th:text="${staff.user.name}">Staff Name</td>
+                <td th:text="${staff.user.email}">email@example.com</td>
+                <td th:text="${staff.user.phone}">123-456-7890</td>
+                <td th:text="${staff.department}">something</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Staff Dashboard Section -->
+<section th:if="${isstaff}" class="container mt-5" th:fragment="staff-dashboard">
+
+<!--     Staff Info Section -->
+    <div class="card mb-4 shadow-sm border-primary">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Staff Information</h4>
+        </div>
+        <div class="card-body">
+            <p><strong>Name:</strong> <span th:text="${staff.user.name}">Aung Aung</span></p>
+            <p><strong>Email:</strong> <span th:text="${staff.user.email}">Aung@gmail.com</span></p>
+            <p><strong>Department:</strong> <span th:text="${staff.department}">Room Service</span></p>
+        </div>
+    </div>
+
+    <!-- Reservation List Section -->
+    <div class="card shadow-sm my-3">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">List of Reservations</h5>
+        </div>
+        <div class="table-container rounded-4">
+            <table class="table">
+                <thead class="table-light">
+                <tr>
+                    <th>Reservation ID</th>
+                    <th>Customer</th>
+                    <th>Room</th>
+                    <th>Check-In</th>
+                    <th>Check-Out</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="res : ${reservations}">
+                    <td th:text="${res.id}"></td>
+                    <td th:text="${res.customer.user.name}"></td>
+                    <td th:text="${res.room.roomNumber}"></td>
+                    <td th:text="${res.checkinDate}"></td>
+                    <td th:text="${res.checkoutDate}"></td>
+                    <td th:if="${res.totalAmount == (res.payment != null ? res.payment.amount : 0)}" class="text-success">Paid</td>
+                    <td th:if="${res.totalAmount != (res.payment != null ? res.payment.amount : 0)}" class="text-danger">Unpaid</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Report Form -->
+    <form class="my-4 p-4 border rounded shadow-sm bg-light" action="/a/submit" method="post">
+        <h5 class="mb-3">Submit a Report</h5>
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Report Title</label>
+            <input type="text" id="title" name="title" class="form-control" placeholder="Enter report title" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="content" class="form-label">Report Content</label>
+            <textarea id="content" name="content" rows="4" class="form-control" placeholder="Write your report here..." required></textarea>
+        </div>
+
+        <input type="hidden" name="staffId" th:value="${staff.id}" />
+
+        <button type="submit" class="btn btn-primary">Submit Report</button>
+    </form>
+
+
+</section>
+
+
+<!-- fragments/report.html -->
+<section th:if="${isadmin}" th:fragment="reportlist">
+    <div class="container my-5">
+        <h3 class="mb-4">Submitted Reports</h3>
+
+        <div th:if="${#lists.isEmpty(reports)}" class="alert alert-info">
+            No reports have been submitted yet.
+        </div>
+
+        <div class="row g-4" th:if="${!#lists.isEmpty(reports)}">
+            <div class="col-md-6" th:each="report : ${reports}">
+                <div class="card shadow-sm h-100 border-start border-4 border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${report.title}">Report Title</h5>
+                        <p class="card-text text-muted" th:text="${report.reportDate}">12 Jul 2025</p>
+                        <p class="card-text" th:text="${report.content}">Report content goes here...</p>
+                        <p class="card-text">
+                            <strong>Submitted by:</strong>
+                            <span th:text="${report.staff.user.name}">Staff Name</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+</html>

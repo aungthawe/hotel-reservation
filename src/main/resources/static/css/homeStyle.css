@@ -1,0 +1,84 @@
+
+.fade-out {
+            animation: fadeOut 0.5s forwards;
+        }
+.fade-in {
+            animation: fadeIn 0.5s forwards;
+}
+@keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+}
+
+@keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+}
+.offer-card {
+      background-color: #004aad;
+      color: #fff;
+}
+    .offer-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .offer-description {
+      font-size: 1rem;
+    }
+    .btn-book {
+      background-color: #4b97f0;
+    }
+    .btn-book:hover {
+      background-color: #3a7ad1;
+    }
+    .btn-view-all {
+      background-color: #d9d9d9;
+      width:100px;
+    }
+    body {
+        color:black;
+    }
+    .btn-custom {
+        background-color: #a3c6de;
+        color: black;
+        border-radius: 10px;
+    }
+    .btn-custom:hover{
+        background-color: white;
+        color: black;
+    }
+
+    .light-blue {
+        background-color: #9cdbfc;
+    }
+    .dark-blue {
+        background-color: #78a9c5;
+    }
+    .table-container {
+        background-color: #9cdbfc;
+        border-radius: 10px;
+        padding: 10px;
+        height: 300px;
+        overflow-y: auto;
+    }
+    .sectionme {
+        width: 100%;
+        padding: 20px;
+        background: white;
+        color: black;
+        border-radius: 15px;
+        display: none;
+    }
+    .sectionme.active {
+      opacity: 1;
+      display: block;
+    }
+

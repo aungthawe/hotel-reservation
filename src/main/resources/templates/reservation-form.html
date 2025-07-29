@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation Confirmation</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" >
+    <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <link th:href="@{/css/homeStyle.css}" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div th:replace="fragments/header :: header"></div>
+
+<!--reservation detail form-->
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded-4">
+                <div class="card-body">
+                    <div class="text-center" style="color:#002244">
+                        <h4>Reservation Details</h4>
+                    </div>
+                    <p class="text-danger text-center" th:text="${error}"></p>
+                    <div class="row">
+                        <div class="col-6">
+                            <p><strong>Room Number:</strong> <span class="badge bg-dark text-light" th:text="${room.roomNumber}"></span></p>
+                            <p><strong>Check-in Date:</strong> <span th:text="${checkinDate}"></span></p>
+                            <p><strong>Check-out Date:</strong> <span th:text="${checkoutDate}"></span></p>
+                        </div>
+                        <div class="col-6">
+                            <p><strong>RoomType:</strong><span th:text="${room.roomType.typeName}"></span></p>
+                            <p><strong>Capacity:</strong> <span th:text="${room.capacity}"></span></p>
+                            <p><strong>Price Per Night:</strong> <span th:text="${room.price + '$'}"></span></p>
+                            <p><strong>Features:</strong> <span th:text="${room.features}"></span></p>
+
+                        </div>
+                    </div>
+<!--                    payment processing form,For making payment-->
+                    <form th:unless="${payment}" action="/payment/process" method="Get">
+                        <!-- Payment Card Selection -->
+                        <div th:if="${paymentCards != null and !paymentCards.isEmpty()}" class="mb-4">
+                            <label class="form-label fw-bold">Select a Payment Method:</label>
+                            <div class="row row-cols-1 row-cols-md-2 g-3">
+                                <div class="col" th:each="card : ${paymentCards}">
+                                    <div class="card h-100 shadow-sm border-primary">
+                                        <div class="card-body d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <div class="mb-1">
+                                                    <span class="fs-5" th:if="${card.type == 'VISA'}">💳</span>
+                                                    <span class="fs-5" th:if="${card.type == 'PayPal'}">🅿️</span>
+                                                    <span class="fs-5" th:unless="${card.type == 'VISA' or card.type == 'PayPal'}">💰</span>
+                                                    <strong th:text="${card.type}">Card Type</strong>
+                                                </div>
+                                                <div class="small">
+                                                    <div><strong>Cardholder:</strong> <span th:text="${card.cardHolderName}"></span></div>
+                                                    <div><strong>Number:</strong> <span th:text="${card.maskedCardNumber}"></span></div>
+                                                    <div><strong>Expiry:</strong> <span th:text="${card.expiryDate}"></span></div>
+                                                </div>
+                                            </div>
+                                            <div class="form-check ms-3">
+                                                <input class="form-check-input" type="radio" name="cardId" th:value="${card.id}" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(paymentCards)}" class="d-flex justify-content-center align-items-center gap-3 mt-4">
+                            <p class="text-muted mb-0">You have no saved payment cards.</p>
+                            <a th:href="@{/account?section=payment}" class="btn btn-outline-primary btn-sm">Manage Payment Methods</a>
+                        </div>
+
+                        <input type="hidden" name="roomId" th:value="${room.id}">
+                        <div th:if="${checkinDate != null}">
+                            <input type="hidden" name="checkinDate" th:value="${checkinDate}">
+                            <input type="hidden" name="checkoutDate" th:value="${checkoutDate}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Full Name:</label>
+                            <input type="text"    th:value="${user.name}" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nrc" class="form-label">NRC:</label>
+                            <input type="text"  th:value="${customer.nrc}" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address:</label>
+                            <input type="text"   th:value="${customer.address}" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone:</label>
+                            <input type="text"  th:value="${user.phone}" class="form-control" required>
+                        </div>
+                        <!-- Terms Agreement -->
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox"  onchange="toggleSubmit(this)">
+                            <label class="form-check-label" >
+                                I agree to the <a th:href="@{/terms}" target="_blank">Terms & Conditions</a>
+                            </label>
+                        </div>
+                        <div class="text-center">
+                            <p th:if="${#lists.isEmpty(paymentCards)}" class="text-warning">Payment can not be proceed</p>
+                            <button th:if="${checkinDate != null}" type="submit" class="submit-btn btn rounded-3 text-light" style="background-color: #002244;">Proceed Payment</button>
+                            <a th:href="@{/}" th:if="${checkinDate == null}" class="submit-btn btn rounded-3 text-warning" style="background-color: #002244;">Check Date</a>
+                        </div>
+                    </form>
+
+<!--                    reservation confirmation form-->
+                    <form th:if="${payment}" th:action="@{/reservation/confirm}" method="Post" >
+                        <input type="hidden" name="roomId" th:value="${room.id}" />
+
+                        <div th:if="${checkinDate != null}">
+                            <input type="hidden" name="checkinDate" th:value="${checkinDate}" />
+                            <input type="hidden" name="checkoutDate" th:value="${checkoutDate}" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Full Name:</label>
+                            <input type="text" id="fullName" name="fullName" th:value="${user.name}" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="nrc" class="form-label">NRC:</label>
+                            <input type="text" id="nrc" name="nrc" th:value="${customer.nrc}" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address:</label>
+                            <input type="text" id="address" name="address" th:value="${customer.address}" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone:</label>
+                            <input type="text" id="phone" name="phone" th:value="${user.phone}" class="form-control" required />
+                        </div>
+                        <p class="text-success">Your Payment process went well,Click button to save your reservation</p>
+                        <!-- Terms Agreement -->
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox"  onchange="toggleSubmit(this)">
+                            <label class="form-check-label">
+                                I agree to the <a th:href="@{/terms}" target="_blank">Terms & Conditions</a>
+                            </label>
+                        </div>
+                        <div th:if="${payment}" class="text-center">
+                            <input type="hidden" name="paymentId" th:value="${payment.id}" />
+                            <button  type="submit" th:if="${checkinDate != null}" class="submit-btn btn rounded-3 text-light" style="background-color: #002244;">
+                                Confirm Reservation
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Load JavaScript files -->
+<script src="/js/header.js"></script>
+<script src="/js/common.js"></script>
+</body>
+</html>

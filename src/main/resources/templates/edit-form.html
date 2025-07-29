@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Settings</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/homeStyle.css}" rel="stylesheet">
+
+</head>
+<body>
+
+<!-- Header -->
+<nav class="navbar navbar-dark bg-dark px-4">
+    <span class="navbar-brand mb-0 h5">THE ZEPHYR HOTEL</span>
+    <div class="d-flex align-items-center text-white">
+        <i class="bi bi-person-circle me-2"></i>
+        Your account
+    </div>
+</nav>
+
+<!-- Account Settings Section -->
+<div class="container py-5">
+    <h3 class="fw-bold mb-2">Accounting settings</h3>
+    <p class="text-muted mb-4">Manage your account setting for effective use</p>
+    <a th:if="${section != 'dashboard'}" th:href="@{/account?section=history}" class="text-decoration-none d-inline-flex align-items-center">
+        <i class="bi bi-arrow-left me-1"></i> Back to Reservation History
+    </a>
+</div>
+
+<div class="container mt-5">
+    <h3>Edit Reservation</h3>
+
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${message}">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+<!--    Reservaiton-info-->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Reservation Info</h5>
+
+            <p class="mb-1"><strong>Room Number:</strong> <span th:text="${reservation.room.roomNumber}">101</span></p>
+            <p class="mb-1"><strong>Room Type:</strong> <span th:text="${reservation.room.roomType.typeName}">Double</span></p>
+            <p class="mb-1"><strong>Guest Name:</strong> <span th:text="${reservation.customer.user.name}">Aung Thawe</span></p>
+            <p class="mb-1"><strong>Phone:</strong> <span th:text="${reservation.customer.user.phone}">+1234567890</span></p>
+
+        </div>
+    </div>
+
+    <form th:action="@{'/reservation/edit/' + ${reservation.id}}" method="post">
+        <div class="mb-3">
+            <label for="checkinDate" class="form-label">Check-in Date</label>
+            <input type="date" class="form-control" id="checkinDate" name="checkinDate"
+                   th:value="${reservation.checkinDate}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="checkoutDate" class="form-label">Check-out Date</label>
+            <input type="date" class="form-control" id="checkoutDate" name="checkoutDate"
+                   th:value="${reservation.checkoutDate}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Reservation</button>
+        <a th:href="@{/account?section=history}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<script th:src="@{/js/jquery-3.6.0.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+
+</html>
