@@ -16,8 +16,9 @@
         <input type="hidden" name="id" th:value="${room.id}" />
 
         <div class="mb-3">
-            <label class="form-label">Room Number</label>
-            <input type="text" class="form-control" id="roomNumber" name="roomNumber" th:value="${room.roomNumber}" onkeyup="checkRoomNumber()" required />
+            <label class="form-label">Room Number <span th:text="${room.roomNumber}"></span></label>
+            <input type="hidden" class="form-control" id="roomNumber" name="roomNumber" th:value="${room.roomNumber}" required />
+            <span id="roomNumberMessage"></span>
         </div>
 
         <div class="mb-3">
@@ -70,11 +71,11 @@
             <input type="number" class="form-control" name="discount" th:value="${room.discount}" />
         </div>
 
-        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <button type="submit" id="saveRoomBtn" class="btn btn-primary">Save Changes</button>
         <a th:href="@{/a/home}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 
-<script src="/js/admin/admin.js"></script>
+<script th:src="@{/js/admin/admin.js}"></script>
 </body>
 </html>

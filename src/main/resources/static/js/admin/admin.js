@@ -52,7 +52,7 @@ function showSection(sectionId) {
 function checkRoomNumber() {
     let roomNumber = document.getElementById("roomNumber").value.trim();
     let roomNumberMessage = document.getElementById("roomNumberMessage");
-    let stateroom = document.getElementById("saveroombtn");
+    let stateroom = document.getElementById("saveRoomBtn");
     if (roomNumber.length > 0) {
         $.ajax({
             url: "/rooms/checkRoomNumber",
