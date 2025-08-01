@@ -79,6 +79,17 @@ document.addEventListener("DOMContentLoaded", function () {
       resultSection.scrollIntoView({ behavior: "smooth" });
     }
   });
+
+  document.addEventListener("DOMContentLoaded", function() {
+    var target = /*[[${scrollTo}]]*/ '';
+    if (target) {
+      var el = document.getElementById(target);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  });
+
 document.getElementById("loginBtn").addEventListener("click", function () {
     let username = document.getElementById("username").value.trim();
     let messageSpan = document.getElementById("usernameMessage");

@@ -37,4 +37,13 @@ public class EncryptionUtil {
         byte[] decrypted = cipher.doFinal(Base64.getDecoder().decode(encryptedString));
         return new String(decrypted);
     }
+
+    public boolean matches(String raw, String encrypted){
+        try{
+            String decrypted = decrypt(encrypted);
+            return raw.equals(decrypted);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

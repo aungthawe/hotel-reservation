@@ -425,5 +425,23 @@
     </div>
   </section>
 
+<!--  custom alert-->
+  <div th:fragment="floatingAlerts" id="floating-alerts" class="position-fixed top-0 start-50 translate-middle-x mt-3 w-100" style="max-width:600px; pointer-events:none; z-index: 2050;">
+    <div th:if="${message}" class="floating-alert alert alert-success d-flex align-items-center justify-content-between shadow-lg rounded-4"
+         role="alert" data-type="success">
+      <div>
+        <strong>Success:</strong> <span th:text="${message}">Operation completed.</span>
+      </div>
+      <button type="button" class="btn-close ms-3" aria-label="Close" onclick="dismissFloatingAlert(this)"></button>
+    </div>
+
+    <div th:if="${error}" class="floating-alert alert alert-danger d-flex align-items-center justify-content-between shadow-lg rounded-4"
+         role="alert" data-type="error">
+      <div>
+        <strong>Error:</strong> <span th:text="${error}">Something went wrong.</span>
+      </div>
+      <button type="button" class="btn-close ms-3" aria-label="Close" onclick="dismissFloatingAlert(this)"></button>
+    </div>
+  </div>
 
 </htmL>

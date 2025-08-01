@@ -22,6 +22,7 @@
                     <!-- Error Message -->
                     <div th:if="${error}" class="alert alert-danger text-center">
                         Invalid username or password
+                        <a th:href="@{/}">back to Homepage</a>
                     </div>
 
                     <form id="loginForm" th:action="@{/users/login}" method="POST">
@@ -32,7 +33,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                            <input type="password"  class="form-control" id="password" name="password" placeholder="Enter your password" minlength="6" maxlength="16" required>
                         </div>
                         <div class="d-grid mt-4">
                             <button type="submit" id="loginBtn" class="btn btn-primary rounded-3">Login</button>

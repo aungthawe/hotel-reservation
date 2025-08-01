@@ -80,6 +80,7 @@ public class MainController {
             session.setAttribute("username199", username);
             session.setAttribute("nameofuser",user.getName());
             session.setAttribute("usercookierole", role);
+            model.addAttribute("scrollTo",redirectAttributes.getAttribute("scrollTo"));
 
             if (RoleConstants.MANAGER.equals(role)) {
 

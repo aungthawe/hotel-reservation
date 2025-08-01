@@ -1,0 +1,46 @@
+
+  .floating-alert {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+    pointer-events: auto;
+    animation: inAnim 0.6s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+
+  /* Entrance */
+  @keyframes inAnim {
+    0% {
+      opacity: 0;
+      transform: translateY(-40px) scale(0.9);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(5px) scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  /* Shake for error after a slight delay */
+  .floating-alert[data-type="error"] {
+    animation: inAnim 0.6s cubic-bezier(.2,.8,.2,1) forwards, shake 0.8s ease 0.8s both;
+  }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%,60% { transform: translateX(-5px); }
+    40%,80% { transform: translateX(5px); }
+  }
+
+  /* Exit state */
+  .floating-alert.exit {
+    animation: outAnim 0.6s ease forwards;
+  }
+
+  @keyframes outAnim {
+    to {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.95);
+    }
+  }

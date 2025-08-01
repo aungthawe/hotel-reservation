@@ -3,6 +3,7 @@ package com.project.hotel.controller;
 import com.project.hotel.entity.Customer;
 import com.project.hotel.entity.User;
 import com.project.hotel.repository.UserRepository;
+import com.project.hotel.security.EncryptionUtil;
 import com.project.hotel.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,6 +26,8 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private EncryptionUtil encryptionUtil;
 
     @PostMapping("/login")
     public String loginUser(@RequestParam String username,
@@ -38,8 +41,8 @@ public class UserController {
                 return "login";
             }
 
-            if (user.getPassword().equals(password)) {
-                // Store user details in session
+            if (encryptionUtil.matches(password,user.getPassword())) {
+
                 session.setAttribute("username198", username);
                 session.setAttribute("123phone", user.getPhone());
 
@@ -88,7 +91,21 @@ public class UserController {
                                            @RequestParam(required = false) String nrc,
                                            @RequestParam(required = false) String address,Model model)
     {
+
         String role = "customer";
+
+        String originalUsername = username;
+        username = username.toLowerCase();
+
+        if (password == null || password.length() < 6) {
+            model.addAttribute("error", "Password must be at least 6 characters.");
+            return "redirect:/login";
+        }
+        if (!username.matches("[a-z0-9]+")) {
+            model.addAttribute("error", "Username must be all lowercase alphanumeric (no spaces or special chars).");
+            return "redirect:/login";
+        }
+
         try {
             userService.saveUserWithCustomer(name, username, email, phone, password, age, gender, role, nrc, address);
             model.addAttribute("message","Customer account registeration is complete!!");

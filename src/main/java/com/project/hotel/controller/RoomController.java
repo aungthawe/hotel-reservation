@@ -35,12 +35,13 @@ public class RoomController {
     }
 
     @PostMapping("/addRoom")
-    public String saveRoom(@ModelAttribute Room room, HttpSession session){
+    public String saveRoom(@ModelAttribute Room room, RedirectAttributes redirectAttributes){
         try {
             roomService.saveRoom(room);
-            session.setAttribute("message","Room added success!!");
+            redirectAttributes.addAttribute("message","Room added success!!");
+            redirectAttributes.addAttribute("scrollTo","admin-section");
         }catch (Exception e){
-            session.setAttribute("error","Error: "+e.getMessage());
+            redirectAttributes.addAttribute("error",": "+e.getMessage());
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }

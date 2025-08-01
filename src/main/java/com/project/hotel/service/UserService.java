@@ -7,6 +7,7 @@ import com.project.hotel.repository.CustomerRepository;
 import com.project.hotel.repository.ManagerRepository;
 import com.project.hotel.repository.StaffRepository;
 import com.project.hotel.repository.UserRepository;
+import com.project.hotel.security.EncryptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,8 @@ public class UserService {
     private ManagerRepository managerRepository;
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private EncryptionUtil encryptionUtil;
 
     public User findUserByUsername(String username) {
         return userRepository.findUserByUsername(username);
@@ -53,13 +56,26 @@ public class UserService {
     }
     @Transactional
     public void saveUserWithCustomer(String name,String username,String email,String phone,String password,Integer age,
-                                     String gender,String role,String nrc,String address){
+                                     String gender,String role,String nrc,String address) throws Exception {
+
+        if (username == null || !username.equals(username.toLowerCase())) {
+            throw new IllegalArgumentException("Username must be lowercase");
+        }
+        if (password == null || password.length() < 6) {
+            throw new IllegalArgumentException("Password must be at least 6 characters");
+        }
+        if (!username.matches("[a-z0-9]+")) {
+            throw new IllegalArgumentException("Username contains invalid characters");
+        }
+
+        String encryptedPassword = EncryptionUtil.encrypt(password);
+
         User user = new User();
         user.setName(name);
         user.setUsername(username);
         user.setEmail(email);
         user.setPhone(phone);
-        user.setPassword(password);
+        user.setPassword(encryptedPassword);
         user.setAge(age);
         user.setGender(gender);
         user.setRole(role);
