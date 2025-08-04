@@ -32,12 +32,7 @@
 </div>
 
 <!--Message and Error-->
-<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" th:text="${error}">
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-<div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert" th:text="${message}">
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
+<div th:replace="fragments/common-fragment :: floatingAlerts"></div>
 
 <!--Related section-->
 <div th:replace="fragments/account :: ${section}"></div>

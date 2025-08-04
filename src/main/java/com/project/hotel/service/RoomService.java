@@ -42,6 +42,7 @@ public class RoomService {
         newroom.setDescription(room.getDescription());
         newroom.setFeatures(room.getFeatures());
         newroom.setDiscount(room.getDiscount());
+        newroom.setImagePath(room.getImagePath());
 
 
         roomRepository.save(newroom);
@@ -60,6 +61,7 @@ public class RoomService {
         existingRoom.setDescription(updatedRoom.getDescription());
         existingRoom.setFeatures(updatedRoom.getFeatures());
         existingRoom.setDiscount(updatedRoom.getDiscount());
+        existingRoom.setImagePath(updatedRoom.getImagePath());
 
         roomRepository.save(existingRoom);
     }

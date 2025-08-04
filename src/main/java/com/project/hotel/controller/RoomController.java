@@ -7,17 +7,28 @@ import com.project.hotel.repository.RoomTypeRepository;
 import com.project.hotel.service.RoomService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/rooms")
@@ -35,15 +46,45 @@ public class RoomController {
     }
 
     @PostMapping("/addRoom")
-    public String saveRoom(@ModelAttribute Room room, RedirectAttributes redirectAttributes){
+    public String saveRoom(@ModelAttribute("roomtosave") Room room,
+                           @RequestParam("imageFile")MultipartFile imageFile,
+                           @RequestParam(name = "availability",required = false) Boolean availability,
+                           RedirectAttributes redirectAttributes){
         try {
+
+            if (imageFile != null && !imageFile.isEmpty()){
+
+                String contentType = imageFile.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")){
+                    redirectAttributes.addFlashAttribute("error","Invalid image file");
+                    return "redirect:/";
+                }
+
+                //build destination path
+                String extension = StringUtils.getFilenameExtension(imageFile.getOriginalFilename());
+                if(extension == null)extension = "jpg";//default if missing
+                String dateStr = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String fileName = "room"+room.getRoomNumber() + "_" + dateStr + "." + extension;
+
+                //Path destDir = Paths.get("src/main/resources/static/images/rooms");
+                Path destDir = Paths.get(System.getProperty("user.dir"),"uploads","rooms");
+                Files.createDirectories(destDir);
+                Path target = destDir.resolve(fileName);
+
+                //save file
+                try(InputStream in = imageFile.getInputStream()) {
+                    Files.copy(in,target, StandardCopyOption.REPLACE_EXISTING);
+                }
+                room.setImagePath(fileName);
+            }
+
             roomService.saveRoom(room);
-            redirectAttributes.addAttribute("message","Room added success!!");
-            redirectAttributes.addAttribute("scrollTo","admin-section");
+
+            redirectAttributes.addFlashAttribute("message","Room added success!!");
+            redirectAttributes.addFlashAttribute("scrollTo","admin-section");
         }catch (Exception e){
-            redirectAttributes.addAttribute("error",": "+e.getMessage());
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
+            redirectAttributes.addFlashAttribute("error","Save failed: "+e.getMessage());
+            return "redirect:/error";
         }
         return "redirect:/";
     }
@@ -62,33 +103,48 @@ public class RoomController {
 
     @PostMapping("/update")
     public String updateRoomByParams(
-            @RequestParam("id") Long id,
-            @RequestParam("roomNumber") String roomNumber,
-            @RequestParam("roomType") String roomType,
-            @RequestParam("price") Double price,
-            @RequestParam("capacity") Integer capacity,
-            @RequestParam("status") String status,
-            @RequestParam("availability") boolean availability,
-            @RequestParam("description") String description,
-            @RequestParam("features") String features,
-            @RequestParam(value = "discount", required = false ,defaultValue = "1") Integer discount,Model model
+            @ModelAttribute("room") Room room,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,Model model,RedirectAttributes redirectAttributes
     ) {
-        Room room = roomService.getRoomById(id);
-        RoomType selectedType = roomTypeRepository.findByTypeName(roomType);
+        Room existingRoom = roomService.getRoomById(room.getId());
+        if (existingRoom == null) {
+            redirectAttributes.addFlashAttribute("error","Room Not Found");
+            return "redirect:/";
+        }
+        try {
+            if (imageFile != null && !imageFile.isEmpty()){
 
-        room.setRoomNumber(roomNumber);
-        room.setRoomType(selectedType);
-        room.setPrice(price);
-        room.setCapacity(capacity);
-        room.setStatus(status);
-        room.setAvailability(availability);
-        room.setDescription(description);
-        room.setFeatures(features);
-        room.setDiscount(discount);
+                String contentType = imageFile.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")){
+                    redirectAttributes.addFlashAttribute("error","Invalid image file");
+                    return "redirect:/";
+                }
+
+                //build destination path
+                String extension = StringUtils.getFilenameExtension(imageFile.getOriginalFilename());
+                if(extension == null)extension = "jpg";//default if missing
+                String dateStr = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String fileName = "room"+room.getRoomNumber() + "_" + dateStr + "." + extension;
+
+                //Path destDir = Paths.get("src/main/resources/static/images/rooms");
+                Path destDir = Paths.get(System.getProperty("user.dir"),"uploads","rooms");
+                Files.createDirectories(destDir);
+                Path target = destDir.resolve(fileName);
+
+                //save file
+                try(InputStream in = imageFile.getInputStream()) {
+                    Files.copy(in,target, StandardCopyOption.REPLACE_EXISTING);
+                }
+                room.setImagePath(fileName);
+            }
+        }catch (Exception e){
+            redirectAttributes.addFlashAttribute("error","Update failed: "+e.getMessage());
+            return "redirect:/error";
+        }
 
         roomService.updateRoom(room);
 
-        model.addAttribute("message","Room Edit Success!");
+        redirectAttributes.addFlashAttribute("message","Room Edit Success!");
         return "redirect:/";
     }
 
@@ -123,15 +179,14 @@ public class RoomController {
             return "index"; // return directly with error message
         }
 
-        // Perform the search
         List<Room> rooms = roomService.findAvailableRooms(roomType, capacity, checkinDate, checkoutDate);
 
-        // Just pass search-specific data via model
         model.addAttribute("searchResults", rooms);
         model.addAttribute("roomType", roomType);
         model.addAttribute("checkinDate", checkinDate);
         model.addAttribute("checkoutDate", checkoutDate);
         model.addAttribute("capacity", capacity);
+        model.addAttribute("scrollTo","search-result-section");
 
         return "index";
     }

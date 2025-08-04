@@ -2,7 +2,7 @@
 
 
 <!-- Admin Dashboard Fragment -->
-<section id="adminsection"  th:fragment="adminsection" th:if="${isadmin}" style="background-color:#002244;" >
+<section id="admin-section"  th:fragment="adminsection" th:if="${isadmin}" style="background-color:#002244;" >
 
 
     <!-- Add Room Modal -->
@@ -14,7 +14,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form th:action="@{/rooms/addRoom}" th:object="${roomtosave}" method="post">
+                    <form th:action="@{/rooms/addRoom}" enctype="multipart/form-data" th:object="${roomtosave}" method="post">
                         <div class="mb-3">
                             <label for="roomNumber" class="form-label">Room Number</label>
                             <input type="text" class="form-control" id="roomNumber" th:field="*{roomNumber}" onkeyup="checkRoomNumber()" required >
@@ -37,11 +37,12 @@
                         </div>
                         <button type="button" id="nextButton" class="btn btn-secondary" onclick="showNextFields()">Next</button>
                         <div id="optionalFields" style="display: none;">
+
                             <div class="mb-3">
                                 <label class="form-label">Availability</label>
-                                <select class="form-control" id="availability" th:field="*{availability}">
-                                    <option value="1">Available</option>
-                                    <option value="0">Not Available</option>
+                                <select th:field="*{availability}" class="form-control">
+                                    <option th:value="true">Available</option>
+                                    <option th:value="false">Not Available</option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -62,7 +63,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="image" class="form-label">Upload Image</label>
-                                <input type="file" class="form-control" id="image" th:field="*{image}">
+                                <input type="file" class="form-control" id="image" name="imageFile" accept="image/*">
                             </div>
                         </div>
                         <button type="submit" class="btn btn-success" id="saveRoomBtn">Save Room</button>

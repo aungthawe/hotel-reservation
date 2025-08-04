@@ -33,10 +33,7 @@
                     </div>
 
                     <!-- Error and Inform Messages -->
-                    <p class="text-danger text-center" th:if="${error}" th:text="${error}"></p>
-                    <div class="alert alert-success" th:if="${inform}">
-                        <p class="text-success text-center"  th:text="${inform}"></p>
-                    </div>
+                    <div th:replace="fragments/common-fragment :: floatingAlerts"></div>
 
                     <!-- Room Info Section -->
                     <div class="row mb-4">

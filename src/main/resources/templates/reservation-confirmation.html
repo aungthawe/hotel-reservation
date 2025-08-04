@@ -13,21 +13,7 @@
 
 <div th:replace="fragments/header :: header"></div>
 
-<!--alert for registerations-->
-<div class="container-fluid my-3">
-    <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <span th:text="${session.message}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    <div th:if="${usercookiename}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <span th:text="'users name: '+${usercookiename}+',users role: '+${usercookierole}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span th:text="${session.error}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-</div>
+<div th:replace="fragments/common-fragment :: floatingAlerts"></div>
 
 <div th:replace="fragments/header :: herocarousel"></div>
 

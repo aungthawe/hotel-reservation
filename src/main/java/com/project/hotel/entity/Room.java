@@ -27,9 +27,8 @@ public class Room {
 
     private String status;
     private boolean availability;
-    @Lob
-    @Column(nullable = true)
-    private byte[] image;
+
+    private String imagePath;
 
     private String description;
     private String features;
@@ -101,12 +100,12 @@ public class Room {
         this.status = status;
     }
 
-    public byte[] getImage() {
-        return image;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setImage(byte[] image) {
-        this.image = image;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getDescription() {

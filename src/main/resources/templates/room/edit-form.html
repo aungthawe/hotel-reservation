@@ -12,68 +12,77 @@
     <a th:href="@{/a/home}" class="btn btn-secondary">Back To Homepage</a>
 
 
-    <form action="/rooms/update" method="post">
-        <input type="hidden" name="id" th:value="${room.id}" />
+    <form th:action="@{/rooms/update}" th:object="${room}" method="post" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{id}" />
 
-        <div class="mb-3">
-            <label class="form-label">Room Number <span th:text="${room.roomNumber}"></span></label>
-            <input type="hidden" class="form-control" id="roomNumber" name="roomNumber" th:value="${room.roomNumber}" required />
-            <span id="roomNumberMessage"></span>
+        <div class="row">
+
+            <div class=" col-6 mb-3">
+                <label class="form-label">Room Number</label>
+                <input type="text" class="form-control" th:field="*{roomNumber}" readonly />
+
+                <div class="mb-3">
+                    <label class="form-label">Change Image</label>
+                    <input type="file" class="form-control" name="imageFile" />
+                </div>
+            </div>
+
+            <div class="col-6 mb-3">
+                <label class="form-label">Current Room Image</label>
+                <div>
+                    <img th:if="${room.imagePath != null and room.imagePath != ''}"
+                         th:src="@{'/images/rooms/' + ${room.imagePath}}"
+                         alt="Room Image"
+                         class="rounded-4 mb-3"
+                         style="width:300px; height:auto; object-fit:cover;" />
+                    <p th:if="${room.imagePath == null or room.imagePath == ''}">
+                        No image uploaded for this room.
+                    </p>
+                </div>
+            </div>
+
         </div>
 
         <div class="mb-3">
             <label class="form-label">Room Type</label>
-            <select name="roomType" class="form-select" required>
+            <select class="form-select" th:field="*{roomType.typeName}">
                 <option th:each="type : ${session.roomTypes}"
                         th:value="${type.typeName}"
-                        th:selected="${type.typeName == room.roomType.typeName}"
-                        th:text="${type.typeName}">
-                </option>
+                        th:text="${type.typeName}"></option>
             </select>
         </div>
 
         <div class="mb-3">
             <label class="form-label">Price</label>
-            <input type="number" class="form-control" name="price" th:value="${room.price}" step="0.01" required />
+            <input type="number" class="form-control" th:field="*{price}" step="0.01" />
         </div>
 
         <div class="mb-3">
             <label class="form-label">Capacity</label>
-            <input type="number" class="form-control" name="capacity" th:value="${room.capacity}" />
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Status</label>
-            <input type="text" class="form-control" name="status" th:value="${room.status}" />
+            <input type="number" class="form-control" th:field="*{capacity}" />
         </div>
 
         <div class="mb-3">
             <label class="form-label">Availability</label>
-            <select name="availability" class="form-select">
-                <option th:value="true" th:selected="${room.availability} == true">Available</option>
-                <option th:value="false" th:selected="${room.availability} == false">Not Available</option>
+            <select th:field="*{availability}" class="form-control">
+                <option th:value="true">Available</option>
+                <option th:value="false">Not Available</option>
             </select>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Description</label>
-            <textarea class="form-control" name="description" rows="3"
-                      th:text="${room.description}"></textarea>
+            <label class="form-label">Status</label>
+            <select class="form-select" th:field="*{status}">
+                <option th:value="Clean">Clean</option>
+                <option th:value="Clean">Dirty</option>
+                <option th:value="Clean">...</option>
+            </select>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Features</label>
-            <input type="text" class="form-control" name="features" th:value="${room.features}" />
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Discount (%)</label>
-            <input type="number" class="form-control" name="discount" th:value="${room.discount}" />
-        </div>
-
-        <button type="submit" id="saveRoomBtn" class="btn btn-primary">Save Changes</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
         <a th:href="@{/a/home}" class="btn btn-secondary">Cancel</a>
     </form>
+
 </div>
 
 <script th:src="@{/js/admin/admin.js}"></script>

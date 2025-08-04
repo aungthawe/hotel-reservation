@@ -49,6 +49,8 @@ public class AdminController {
             return "redirect:/error";
         }
         if(RoleConstants.MANAGER.equals(role)){
+            Room roomtosave = new Room();
+            roomtosave.setAvailability(true);
             List<Staff> staffs =  staffRepository.findAll();
             List<Report> reports = reportRepository.findAll();
             List<Room> allRooms = roomRepository.findAll();
@@ -67,7 +69,7 @@ public class AdminController {
 
             model.addAttribute("reports",reports);
             model.addAttribute("staffs",staffs);
-            model.addAttribute("roomtosave",new Room());
+            model.addAttribute("roomtosave",roomtosave);
             model.addAttribute("users",users);
             model.addAttribute("allRooms",allRooms);
             model.addAttribute("customers",allcustomers);

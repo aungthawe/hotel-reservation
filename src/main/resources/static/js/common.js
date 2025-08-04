@@ -73,21 +73,27 @@ function showAllOfferRoom(){
 
 
 //  to scroll to search result
-document.addEventListener("DOMContentLoaded", function () {
-    const resultSection = document.getElementById("search-result-section");
-    if (resultSection) {
-      resultSection.scrollIntoView({ behavior: "smooth" });
-    }
-  });
+//document.addEventListener("DOMContentLoaded", function () {
+//    const resultSection = document.getElementById("search-result-section");
+//    if (resultSection) {
+//      resultSection.scrollIntoView({ behavior: "smooth" });
+//    }
+//  });
 
   document.addEventListener("DOMContentLoaded", function() {
-    var target = /*[[${scrollTo}]]*/ '';
-    if (target) {
-      var el = document.getElementById(target);
+    var targetId = /*[[${scrollTo}]]*/ '';
+    if (!targetId) return;
+
+    function scrollIfReady() {
+      var el = document.getElementById(targetId);
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        // retry briefly if element isn't yet present
+        setTimeout(scrollIfReady, 100);
       }
     }
+    scrollIfReady();
   });
 
 document.getElementById("loginBtn").addEventListener("click", function () {

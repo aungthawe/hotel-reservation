@@ -60,7 +60,7 @@ public class MainController {
         String role = getCookieValue(request, "role");
         String username = getCookieValue(request,"username");
 
-        session.setAttribute("room", roomService.getDiscountedRooms());
+        session.setAttribute("discountedRooms", roomService.getDiscountedRooms());
         session.setAttribute("roomTypes", roomTypeRepository.findAll());
         session.setAttribute("reviews", reviewRepository.findAll());
 
