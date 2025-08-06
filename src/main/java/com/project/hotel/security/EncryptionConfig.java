@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 public class EncryptionConfig {
 
     @Value("${encryption.secret-key-128}")
-    private String secretKey;
+    private String secretKey128;
 
     public String getSecretKey() {
-        return secretKey;
+        return secretKey128;
     }
 }

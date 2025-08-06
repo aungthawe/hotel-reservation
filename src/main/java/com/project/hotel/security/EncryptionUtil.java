@@ -1,5 +1,6 @@
 package com.project.hotel.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Cipher;
@@ -10,15 +11,11 @@ import java.util.Base64;
 @Service
 public class EncryptionUtil {
 
-    private static EncryptionConfig encryptionConfig = new EncryptionConfig();
+    @Autowired
+    private  EncryptionConfig encryptionConfig;
     private static final String ALGORITHM = "AES";
 
-
-    public EncryptionUtil(EncryptionConfig encryptionConfig) {
-        EncryptionUtil.encryptionConfig = encryptionConfig;
-    }
-
-    public static String encrypt(String rawString) throws Exception {
+    public String encrypt(String rawString) throws Exception {
         String secretKey = encryptionConfig.getSecretKey();
         SecretKeySpec key = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM);

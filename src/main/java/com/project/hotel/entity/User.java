@@ -28,10 +28,7 @@ public class User {
     private String phone;
     private Integer age;
     private String gender;
-
-    @Lob
-    @Column(nullable = true)
-    private byte[] image;
+    private String imagePath;
 
     // Getters and Setters
 
@@ -49,6 +46,14 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getPassword() {
@@ -97,14 +102,6 @@ public class User {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
     }
 
     public String getName() {

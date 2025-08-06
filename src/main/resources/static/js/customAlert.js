@@ -3,7 +3,7 @@
     const alerts = document.querySelectorAll("#floating-alerts .floating-alert");
     alerts.forEach((el, idx) => {
       // base display duration
-      const displayMs = 4500;
+      const displayMs = 3500;
       const extraStagger = idx * 300; // if multiple, stagger
       setTimeout(() => startDismiss(el), displayMs + extraStagger);
     });

@@ -1,0 +1,115 @@
+/* Container adjustments */
+.account-section {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.account-title {
+    font-size: 1.8rem;
+}
+
+/* Card styling */
+.account-card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.account-card-body {
+    padding: 2rem;
+}
+
+/* Profile image */
+.account-profile .profile-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+.account-profile .profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #f0f0f0;
+}
+.account-profile .camera-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    cursor: pointer;
+}
+.account-profile .camera-overlay i {
+    font-size: 2rem;
+    color: #fff;
+}
+.account-profile .profile-container:hover .camera-overlay {
+    opacity: 1;
+}
+
+/* Details styling */
+.account-details .detail-item {
+    margin-bottom: 1rem;
+}
+.account-details .detail-item label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 0.2rem;
+}
+.account-details .detail-item p {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    margin: 0;
+}
+
+/* Buttons */
+.account-details a.btn {
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+
+/* Make modal content look cleaner */
+#imageModal .modal-content {
+    border-radius: 12px;
+    padding: 20px;
+    background: #fff;
+}
+
+/* Center image and make it circular */
+#imageModal .modal-img {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #ddd;
+    margin: 0 auto 20px;
+    display: block;
+}
+
+/* Center button group */
+#imageModal .modal-content div {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Button styling */
+#imageModal button {
+    min-width: 100px;
+    font-weight: 500;
+    padding: 8px 16px;
+}
+
+

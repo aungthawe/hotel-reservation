@@ -9,13 +9,17 @@ import com.project.hotel.repository.UserRepository;
 import com.project.hotel.service.PaymentService;
 import com.project.hotel.service.ReservationService;
 import com.project.hotel.service.UserService;
+import com.sun.tools.javac.Main;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.net.http.HttpRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +39,11 @@ public class AccountController {
     private PaymentService paymentService;
 
     @GetMapping("")
-    public String showAccountLayout(@RequestParam(defaultValue = "dashboard")String section, Model model, HttpSession session){
-        String username = (String) session.getAttribute("username199");
-        if(username == null){
+    public String showAccountLayout(@RequestParam(defaultValue = "dashboard") String section, Model model, HttpSession session, HttpServletRequest request) {
+        String username = MainController.getCookieValue(request, "username");
+
+        if (username == null) {
+            model.addAttribute("message", "You haven't logged in yet, Log in to manage your account");
             return "redirect:/login";
         }
         User user = userService.findUserByUsername(username);
@@ -50,38 +56,45 @@ public class AccountController {
             editableMap.put(res.getId(), editable);
         }
 
-        model.addAttribute("user",user);
-        model.addAttribute("customer",customer);
-        model.addAttribute("reservations",reservations);
-        model.addAttribute("editableMap",editableMap);
-        model.addAttribute("section",section);
+        model.addAttribute("user", user);
+        model.addAttribute("customer", customer);
+        model.addAttribute("reservations", reservations);
+        model.addAttribute("editableMap", editableMap);
+        model.addAttribute("section", section);
         model.addAttribute("paymentCards", paymentService.getCardsByUserId(user.getId()));
-        model.addAttribute("payments",paymentService.getPaymentsByUserId(user.getId()));
+        model.addAttribute("payments", paymentService.getPaymentsByUserId(user.getId()));
 
         return "account-layout";
     }
 
     @GetMapping("/edit")
-    public String showEditForm(HttpSession session,Model model){
-        String username =(String) session.getAttribute("username199");
-        User user = userService.findUserByUsername(username);
-        if(user == null) return "redirect:/login";
+    public String showEditForm(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        String username = MainController.getCookieValue(request,"username");
+        User user = new User();
+        if (username != null) {
+            user = userService.findUserByUsername(username);
+            redirectAttributes.addFlashAttribute("error","You must have an account!!");
+            if (user == null) return "redirect:/login";
 
-        Customer customer = userService.findCustomerByUserId(user.getId());
+            Customer customer = userService.findCustomerByUserId(user.getId());
 
-        model.addAttribute("user",user);
-        model.addAttribute("customer",customer);
-        return "redirect:/account?section=edit";
+            redirectAttributes.addFlashAttribute("user", user);
+            redirectAttributes.addFlashAttribute("customer", customer);
+            return "redirect:/account?section=edit";
+        }else {
+            redirectAttributes.addFlashAttribute("error", "You must have an account!!");
+            return "redirect:/login";
+        }
     }
 
     @PostMapping("/edit")
     public String updateAccount(
             @ModelAttribute("user") User updatedUser,
             @ModelAttribute("customer") Customer updatedCustomer,
-            HttpSession session,
-            RedirectAttributes redirectAttributes,Model  model
-    ){
-        User user = userService.findUserByUsername((String) session.getAttribute("username199"));
+            HttpServletRequest request,
+            RedirectAttributes redirectAttributes, Model model
+    ) {
+       User user = userService.findUserByUsername(MainController.getCookieValue(request,"username"));
         Customer customer = userService.findCustomerByUserId(user.getId());
 
         user.setName(updatedUser.getName());
@@ -95,10 +108,48 @@ public class AccountController {
         userRepository.save(user);
         customerRepository.save(customer);
 
-        // Refresh session user object
-        session.setAttribute("loggedInUser", user);
-
         redirectAttributes.addFlashAttribute("message", "Account updated successfully.");
         return "redirect:/account?section=personal";
+    }
+
+    @PostMapping("/profile/update")
+    public String updateProfile(@RequestParam MultipartFile imageFile, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+        String username = MainController.getCookieValue(request, "username");
+        User user = userService.findUserByUsername(username);
+        try {
+            if (imageFile == null || imageFile.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "No image selected!");
+                return "redirect:/account?section=personal";
+            }
+
+            userService.updateUserProfile(user.getUsername(), imageFile);
+            redirectAttributes.addFlashAttribute("message", "Profile updated successfully!");
+            return "redirect:/account?section=personal";
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "User profile update failed: " + e.getMessage());
+            return "redirect:/error";
+        }
+    }
+
+
+    @PostMapping("/profile/delete-image/{imagePath}")
+    public String deleteProfileImage(@PathVariable String imagePath,HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        String username = MainController.getCookieValue(request, "username");
+        User user = userService.findUserByUsername(username);
+        if (user == null){
+            redirectAttributes.addFlashAttribute("error", "User not found");
+            return "redirect:/account?section=personal";
+        }else {
+            try {
+                userService.deleteUserProfile(username,imagePath);
+                redirectAttributes.addFlashAttribute("message", "Profile deleted successfully!");
+                return "redirect:/account?section=personal";
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("error", "User profile delete failed:" + e.getMessage());
+                return "redirect:/error";
+            }
+        }
+
     }
 }

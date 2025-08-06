@@ -6,16 +6,17 @@ This is a Spring Boot-based web application for managing hotel reservations, use
 
 FEATURES
 --------
-✔ Room search with filters (type, capacity, check-in and check-out dates)
-✔ Payment system using stored cards (with encryption and masking)
-✔ Reservation management (edit/cancel 2 days before check-in)
-✔ User roles: Manager, Customer, Staff
-✔ Staff can submit reports; Manager can view all reservations
-✔ Secure login/logout
-✔ Role-based dashboards(Manager and Staff)
-✔ Review system for customers
-✔ Room management (CRUD)
-✔ Auto room availability tracking
+- ✔ Room search with filters (type, capacity, check-in and check-out dates) 
+
+- ✔ Payment system using stored cards (with encryption and masking)
+- ✔ Reservation management (edit/cancel 2 days before check-in)
+- ✔ User roles: Manager, Customer, Staff
+- ✔ Staff can submit reports; Manager can view all reservations
+- ✔ Secure login/logout
+- ✔ Role-based dashboards(Manager and Staff)
+- ✔ Review system for customers
+- ✔ Room management (CRUD)
+- ✔ Auto room availability tracking
 
 TECHNOLOGIES USED
 -----------------
@@ -41,15 +42,13 @@ RUNNING THE PROJECT
 2. Make sure Java and Maven are installed.
 3. Update `application.properties` with your database credentials.
 4. Run the application using:
-
-
 5. Visit `http://localhost:1999` in your browser.
 
 DEFAULT ROLES (example)
 ------------------------
 - Manager: Manages all rooms, users, reservations, Can edit any reservation.
 - Staff: Can submit reports, Can see reservation
-- Customer: Can book rooms, submit reviews, Edit Account and Payment
+- Customer: Can book rooms, submit reviews, Edit Account and Payment, Edit reservation
 
 DATABASE NOTES
 --------------
@@ -58,7 +57,7 @@ Make sure the database schema is created. Use `schema.sql` or let JPA auto-gener
 SECURITY
 --------
 - Role-based access is enforced for all operations.
-- Card numbers are encrypted using AES before storing.
+- Password , Nrc ,and Card numbers are encrypted using AES before storing.
 - Only the last 4 digits of card numbers are shown (masked).
 
 

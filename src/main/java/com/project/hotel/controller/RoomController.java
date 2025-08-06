@@ -52,33 +52,7 @@ public class RoomController {
                            RedirectAttributes redirectAttributes){
         try {
 
-            if (imageFile != null && !imageFile.isEmpty()){
-
-                String contentType = imageFile.getContentType();
-                if (contentType == null || !contentType.startsWith("image/")){
-                    redirectAttributes.addFlashAttribute("error","Invalid image file");
-                    return "redirect:/";
-                }
-
-                //build destination path
-                String extension = StringUtils.getFilenameExtension(imageFile.getOriginalFilename());
-                if(extension == null)extension = "jpg";//default if missing
-                String dateStr = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String fileName = "room"+room.getRoomNumber() + "_" + dateStr + "." + extension;
-
-                //Path destDir = Paths.get("src/main/resources/static/images/rooms");
-                Path destDir = Paths.get(System.getProperty("user.dir"),"uploads","rooms");
-                Files.createDirectories(destDir);
-                Path target = destDir.resolve(fileName);
-
-                //save file
-                try(InputStream in = imageFile.getInputStream()) {
-                    Files.copy(in,target, StandardCopyOption.REPLACE_EXISTING);
-                }
-                room.setImagePath(fileName);
-            }
-
-            roomService.saveRoom(room);
+            roomService.saveRoom(room,imageFile);
 
             redirectAttributes.addFlashAttribute("message","Room added success!!");
             redirectAttributes.addFlashAttribute("scrollTo","admin-section");
@@ -111,38 +85,8 @@ public class RoomController {
             redirectAttributes.addFlashAttribute("error","Room Not Found");
             return "redirect:/";
         }
-        try {
-            if (imageFile != null && !imageFile.isEmpty()){
 
-                String contentType = imageFile.getContentType();
-                if (contentType == null || !contentType.startsWith("image/")){
-                    redirectAttributes.addFlashAttribute("error","Invalid image file");
-                    return "redirect:/";
-                }
-
-                //build destination path
-                String extension = StringUtils.getFilenameExtension(imageFile.getOriginalFilename());
-                if(extension == null)extension = "jpg";//default if missing
-                String dateStr = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String fileName = "room"+room.getRoomNumber() + "_" + dateStr + "." + extension;
-
-                //Path destDir = Paths.get("src/main/resources/static/images/rooms");
-                Path destDir = Paths.get(System.getProperty("user.dir"),"uploads","rooms");
-                Files.createDirectories(destDir);
-                Path target = destDir.resolve(fileName);
-
-                //save file
-                try(InputStream in = imageFile.getInputStream()) {
-                    Files.copy(in,target, StandardCopyOption.REPLACE_EXISTING);
-                }
-                room.setImagePath(fileName);
-            }
-        }catch (Exception e){
-            redirectAttributes.addFlashAttribute("error","Update failed: "+e.getMessage());
-            return "redirect:/error";
-        }
-
-        roomService.updateRoom(room);
+        roomService.updateRoom(room,imageFile);
 
         redirectAttributes.addFlashAttribute("message","Room Edit Success!");
         return "redirect:/";

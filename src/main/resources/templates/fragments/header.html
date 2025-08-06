@@ -87,16 +87,20 @@
 
 
         <!-- If user is NOT logged in -->
-        <div class="d-flex align-items-center" th:if="${session.nameofuser == null}">
+        <div class="d-flex align-items-center" th:if="${currentUser == null}">
             <a href="registerpage" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#registrationModal" onclick="showStep1()">Register</a>
             <a href="/login" class="btn btn-primary me-2">Log-in</a>
         </div>
 
         <!-- If user IS logged in -->
-        <a th:if="${session.nameofuser != null}" th:href="@{/account}">
+        <a th:if="${currentUser != null}" th:href="@{/account}" >
             <div class="d-flex align-items-center gap-2" id="usericon">
-                <p th:text="${session.nameofuser}"></p>
-                <img src="/images/lady.jpg" alt="User Icon" class="rounded-circle" width="50px" height="50px">
+                <p th:text="${currentUser.displayName}"></p>
+                <img th:if="${currentUser.imagePath != null}"
+                     th:src="@{'/images/users/' + ${currentUser.imagePath}}"
+                     alt="Profile Image" class="rounded-circle" width="50px" height="50px">
+
+                <img th:unless="${currentUser.imagePath != null}" src="/images/user-icon.png" alt="User Icon" class="rounded-circle" width="50px" height="50px">
             </div>
         </a>
 

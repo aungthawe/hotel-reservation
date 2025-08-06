@@ -71,12 +71,17 @@
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Status</label>
-            <select class="form-select" th:field="*{status}">
-                <option th:value="Clean">Clean</option>
-                <option th:value="Clean">Dirty</option>
-                <option th:value="Clean">...</option>
-            </select>
+            <label for="discount" class="form-label">Discount (%)</label>
+            <input type="number" class="form-control" id="discount" th:field="*{discount}">
+        </div>
+
+        <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <input type="text" class="form-control" id="status" th:field="*{status}">
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" th:field="*{description}"></textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">Save Changes</button>

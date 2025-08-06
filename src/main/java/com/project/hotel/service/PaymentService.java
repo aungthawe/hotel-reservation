@@ -22,6 +22,9 @@ public class PaymentService {
     @Autowired
     private PaymentCardRepository paymentCardRepository;
 
+    @Autowired
+    private EncryptionUtil encryptionUtil;
+
     //    Payment Operations
     public  Payment getPaymentById(long paymentId){
         return paymentRepository.findById(paymentId).orElseThrow();
@@ -68,7 +71,7 @@ public class PaymentService {
     public void savePaymentCard(PaymentCard paymentCard){
         try {
             paymentCard.setMaskedCardNumber(maskCardNumber(paymentCard.getCardNumber()));
-            String encryptedCardNumber  = EncryptionUtil.encrypt(paymentCard.getCardNumber());
+            String encryptedCardNumber  = encryptionUtil.encrypt(paymentCard.getCardNumber());
             paymentCard.setCardNumber(encryptedCardNumber);
 
 

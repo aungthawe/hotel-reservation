@@ -22,8 +22,8 @@
                     <p class="text-center">Enter your username and password to access your account.</p>
 
                     <!-- Error Message -->
-                    <div th:if="${error}" class="alert alert-danger text-center">
-                        Invalid username or password
+                    <div th:if="${error}" class="text-decoration-none">
+                        <p class="text-danger">Invalid username or password</p>
                         <a th:href="@{/}">back to Homepage</a>
                     </div>
 
@@ -50,5 +50,6 @@
 <!-- Required JS Files -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/common.js"></script>
+<script th:src="@{/js/customAlert.js}"></script>
 </body>
 </html>

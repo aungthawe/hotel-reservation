@@ -9,6 +9,7 @@ import com.project.hotel.repository.StaffRepository;
 import com.project.hotel.service.ReservationService;
 import com.project.hotel.service.RoomService;
 import com.project.hotel.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,8 +43,8 @@ public class AdminController {
 
 
     @GetMapping("/home")
-    public String getHome(HttpSession session, Model model,RedirectAttributes redirectAttributes){
-        String role = (String) session.getAttribute("usercookierole");
+    public String getHome(HttpServletRequest request,HttpSession session, Model model,RedirectAttributes redirectAttributes){
+        String role = MainController.getCookieValue(request, "role");
         if (role ==  null){
             redirectAttributes.addFlashAttribute("errorMessage", "Invalid attempt to access admin.");
             return "redirect:/error";

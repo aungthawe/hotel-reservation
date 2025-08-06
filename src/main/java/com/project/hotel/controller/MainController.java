@@ -4,6 +4,7 @@ import com.project.hotel.constants.RoleConstants;
 import com.project.hotel.entity.Customer;
 import com.project.hotel.entity.Review;
 import com.project.hotel.entity.User;
+import com.project.hotel.entity.UserProfileDto;
 import com.project.hotel.repository.ReviewRepository;
 import com.project.hotel.repository.RoomRepository;
 import com.project.hotel.repository.RoomTypeRepository;
@@ -44,7 +45,7 @@ public class MainController {
     private ReviewRepository reviewRepository;
 
 
-    private String getCookieValue(HttpServletRequest request, String key) {
+    public static String getCookieValue(HttpServletRequest request, String key) {
         if (request.getCookies() == null) return "";
         for (Cookie cookie : request.getCookies()) {
             if (cookie.getName().equals(key)) {
@@ -64,10 +65,23 @@ public class MainController {
         session.setAttribute("roomTypes", roomTypeRepository.findAll());
         session.setAttribute("reviews", reviewRepository.findAll());
 
-        //is manager??
-        if (!name.isEmpty() && !role.isEmpty()) {
+        if (!name.isEmpty() && !role.isEmpty() && !username.isEmpty()) {
 
             User user = userService.findUserByUsername(username);
+
+            //dto that created in login state
+//            UserProfileDto dto =(UserProfileDto) session.getAttribute("currentUser");
+//
+//            if (dto == null) {
+//                // First time: create new DTO
+//                dto = new UserProfileDto(user.getName(), user.getImagePath());
+//                session.setAttribute("currentUser",dto);
+//
+//            } else {
+//                // Update existing DTO
+//                dto.setDisplayName(user.getName());
+//                dto.setImagePath(user.getImagePath());
+//            }
 
             // Check if customer data exists
             Customer customer = userService.findCustomerByUserId(user.getId());
@@ -76,14 +90,12 @@ public class MainController {
                 session.setAttribute("123address", customer.getAddress());
             }
             // Store user details in session
-            session.setAttribute("123phone", user.getPhone());
-            session.setAttribute("username199", username);
-            session.setAttribute("nameofuser",user.getName());
-            session.setAttribute("usercookierole", role);
+//            session.setAttribute("123phone", user.getPhone());
+//            session.setAttribute("username199", username);
+//            session.setAttribute("usercookierole", role);
             model.addAttribute("scrollTo",redirectAttributes.getAttribute("scrollTo"));
 
             if (RoleConstants.MANAGER.equals(role)) {
-
                 return "redirect:/a/home";
             }
 

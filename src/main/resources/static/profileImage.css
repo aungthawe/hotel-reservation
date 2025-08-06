@@ -1,0 +1,69 @@
+.profile-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+}
+
+.profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #ddd;
+    display: block;
+}
+
+.camera-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none; /* Prevent accidental clicks */
+    transition: opacity 0.3s;
+}
+
+.profile-container:hover .camera-overlay {
+    opacity: 1;
+    pointer-events: auto; /* Only clickable when visible */
+}
+
+/* Make modal content look cleaner */
+#imageModal .modal-content {
+    border-radius: 12px;
+    padding: 20px;
+    background: #fff;
+}
+
+/* Center image and make it circular */
+#imageModal .modal-img {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #ddd;
+    margin: 0 auto 20px;
+    display: block;
+}
+
+/* Center button group */
+#imageModal .modal-content div {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Button styling */
+#imageModal button {
+    min-width: 100px;
+    font-weight: 500;
+    padding: 8px 16px;
+}
+

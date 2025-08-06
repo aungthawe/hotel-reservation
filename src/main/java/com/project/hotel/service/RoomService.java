@@ -1,6 +1,5 @@
 package com.project.hotel.service;
 
-import com.project.hotel.entity.Reservation;
 import com.project.hotel.entity.Room;
 import com.project.hotel.entity.RoomType;
 import com.project.hotel.repository.ReservationRepository;
@@ -8,10 +7,10 @@ import com.project.hotel.repository.RoomRepository;
 import com.project.hotel.repository.RoomTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RoomService {
@@ -23,12 +22,14 @@ public class RoomService {
 
     @Autowired
     private ReservationRepository reservationRepository;
+    @Autowired
+    private  RoomImageService roomImageService;
 
     public List<Room> getDiscountedRooms() {
         return roomRepository.findDiscountedRooms();
     }
 
-    public void saveRoom(Room room){
+    public void saveRoom(Room room, MultipartFile imageFile) {
 
 
         Room newroom = new Room();
@@ -42,16 +43,26 @@ public class RoomService {
         newroom.setDescription(room.getDescription());
         newroom.setFeatures(room.getFeatures());
         newroom.setDiscount(room.getDiscount());
-        newroom.setImagePath(room.getImagePath());
+
+        try {
+            String imagePath = roomImageService.saveImage(imageFile, room.getRoomNumber());
+            if (imagePath != null) {
+                newroom.setImagePath(imagePath);
+            }
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+
 
 
         roomRepository.save(newroom);
 
     }
 
-    public void updateRoom(Room updatedRoom) {
+    public void updateRoom(Room updatedRoom,MultipartFile imageFile) {
         Room existingRoom = roomRepository.findById(updatedRoom.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Room not found with id: " + updatedRoom.getId()));
+
 
         existingRoom.setRoomNumber(updatedRoom.getRoomNumber());
         existingRoom.setPrice(updatedRoom.getPrice());
@@ -61,7 +72,23 @@ public class RoomService {
         existingRoom.setDescription(updatedRoom.getDescription());
         existingRoom.setFeatures(updatedRoom.getFeatures());
         existingRoom.setDiscount(updatedRoom.getDiscount());
-        existingRoom.setImagePath(updatedRoom.getImagePath());
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+
+
+            try {
+                roomImageService.deleteImage(existingRoom.getImagePath());
+                String imagePath = roomImageService.saveImage(imageFile, updatedRoom.getRoomNumber());
+                if (imagePath != null) {
+                    existingRoom.setImagePath(imagePath);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        } else {
+            existingRoom.setImagePath(updatedRoom.getImagePath());
+        }
 
         roomRepository.save(existingRoom);
     }
@@ -71,8 +98,14 @@ public class RoomService {
     }
 
     public boolean deleteRoomById(Long id) {
-        Optional<Room> room = roomRepository.findById(id);
-        if (room.isPresent()) {
+        Room room = roomRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Room not found with id: " + id));
+        if (room != null) {
+            try {
+                roomImageService.deleteImage(room.getImagePath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             roomRepository.deleteById(id);
             return true;
         }
