@@ -1,5 +1,6 @@
 // static/js/register.js
 document.addEventListener("DOMContentLoaded", function() {
+
     function checkUsername() {
         let username = document.getElementById("username").value.trim();
         let messageSpan = document.getElementById("usernameMessage");

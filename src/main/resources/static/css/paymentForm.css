@@ -1,0 +1,22 @@
+/* Wrap form */
+#payment-form {
+    max-width: 700px;
+    margin: auto;
+}
+
+/* Total Amount Box */
+.total-amount-box {
+    padding: 1rem;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    border: 2px solid #e9ecef;
+}
+
+/* Payment card hover effect */
+.payment-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.payment-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}

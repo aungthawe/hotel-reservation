@@ -70,8 +70,6 @@ function showAllOfferRoom(){
       }
   }
 
-
-
 //  to scroll to search result
 //document.addEventListener("DOMContentLoaded", function () {
 //    const resultSection = document.getElementById("search-result-section");
@@ -80,6 +78,7 @@ function showAllOfferRoom(){
 //    }
 //  });
 
+//Scroll to
   document.addEventListener("DOMContentLoaded", function() {
     var targetId = /*[[${scrollTo}]]*/ '';
     if (!targetId) return;

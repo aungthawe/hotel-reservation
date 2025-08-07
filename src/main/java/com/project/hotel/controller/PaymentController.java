@@ -6,6 +6,7 @@ import com.project.hotel.service.PaymentService;
 import com.project.hotel.service.ReservationService;
 import com.project.hotel.service.RoomService;
 import com.project.hotel.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -61,9 +62,9 @@ public class PaymentController {
                                  @RequestParam Long roomId,
                                  @RequestParam @DateTimeFormat LocalDate checkinDate,
                                  @RequestParam @DateTimeFormat LocalDate checkoutDate,
-                                 HttpSession session, Model model, RedirectAttributes redirectAttributes){
+                                 HttpServletRequest request, Model model, RedirectAttributes redirectAttributes){
         Room room = roomService.getRoomById(roomId);
-        User user  = userService.findUserByUsername((String)session.getAttribute("username199"));
+        User user  = userService.findUserByUsername(MainController.getCookieValue(request,"username"));
         Customer customer = userService.findCustomerByUserId(user.getId());
 
         PaymentCard paymentCard = paymentService.getCardByIdAndUserId(cardId,user.getId());
@@ -82,6 +83,7 @@ public class PaymentController {
         model.addAttribute("customer",customer);
         model.addAttribute("checkinDate", checkinDate);
         model.addAttribute("checkoutDate", checkoutDate);
+        model.addAttribute("message","Your Payment process went well!!");
 
         return "reservation-form";
     }

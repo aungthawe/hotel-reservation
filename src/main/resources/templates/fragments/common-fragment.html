@@ -68,20 +68,20 @@
 
       <div class="row d-flex gap-2 justify-content-evenly Roome-container">
         <!-- Card 1 -->
-        <div th:each="searchrooms, iterStat : ${searchResults}"
-             th:if="${searchrooms.availability}"
+        <div th:each="searchRooms, iterStat : ${searchResults}"
+             th:if="${searchRooms.availability}"
              th:attr="style=${iterStat.index >4 ? 'display:none;' : ''}"
              class="offer-card col-9 col-md-5 col-lg-4 p-3 rounded-4">
           <div class="row d-flex justify-content-between">
             <div class="col-md-6">
 
-              <img th:if="${room.imagePath != null and room.imagePath != ''}"
-                   th:src="@{'/images/rooms/' + ${room.imagePath}}"
+              <img th:if="${searchRooms.imagePath != null}"
+                   th:src="@{'/images/rooms/' + ${searchRooms.imagePath}}"
                    alt="Room Image"
                    class="rounded-4"
                    style="width:100%; max-height:150px; object-fit:cover;" />
 
-              <img th:unless="${room.imagePath != null and room.imagePath != ''}"
+              <img th:unless="${searchRooms.imagePath != null}"
                    th:src="@{/images/offerimage.jpg}"
                    alt="Fallback Image"
                    class="rounded-4"
@@ -89,11 +89,11 @@
 
             </div>
             <div class="col-6 d-flex flex-column justify-content-between align-items-start" >
-              <h5 class="" th:text="${'Room Number:'+ searchrooms.roomNumber}"></h5>
-              <p class="offer-description" th:text="${searchrooms.features}"></p>
-              <span class="badge bg-light text-dark offer-description" th:text="${searchrooms.price+'$/night'}"></span>
+              <h5 class="" th:text="${'Room Number:'+ searchRooms.roomNumber}"></h5>
+              <p class="offer-description" th:text="${searchRooms.features}"></p>
+              <span class="badge bg-light text-dark offer-description" th:text="${searchRooms.price+'$/night'}"></span>
               <div>
-                <a th:href="@{/reservation/form(roomId=${searchrooms.id}, roomNumber=${searchrooms.roomNumber}, checkinDate=${checkinDate}, checkoutDate=${checkoutDate})}" class="btn btn-book mt-1">Book Now</a>
+                <a th:href="@{/reservation/form(roomId=${searchRooms.id}, roomNumber=${searchRooms.roomNumber}, checkinDate=${checkinDate}, checkoutDate=${checkoutDate})}" class="btn btn-book mt-1">Book Now</a>
               </div>
             </div>
           </div>

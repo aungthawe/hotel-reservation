@@ -44,34 +44,39 @@ public class ReservationController {
                                       @RequestParam String roomNumber,
                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkinDate,
                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkoutDate,
-                                      Model model,
-                                      HttpSession session) {
+                                      Model model,RedirectAttributes redirectAttributes,
+                                      HttpServletRequest request) {
         Room room = roomService.getRoomById(roomId);
         if (room == null) {
             model.addAttribute("error", "Selected room does not exist.");
             return "index";
         }
 
-        String username = (String) session.getAttribute("username199");
+        String username = MainController.getCookieValue(request,"username");
         if (username == null) {
-            return "redirect:/login";
+            model.addAttribute("error", "You must log in first");
+            return "login";
         }
 
         User user = userService.findUserByUsername(username);
         if (user == null) {
-            return "redirect:/login";
+            model.addAttribute("error", "You need have an account");
+            return "login";
         }
 
         Customer customer = userService.findCustomerByUserId(user.getId());
         List<PaymentCard> paymentCards = paymentService.getCardsByUserId(user.getId());
         if(paymentCards == null){
-            model.addAttribute("message","You must have a payment card to proceed reservation");
+            redirectAttributes.addFlashAttribute("message","You must have a payment card to proceed reservation");
             return "redirect:/account?section=payment";
         }
         if (customer == null) {
             customer = new Customer(); // create empty customer
         }
 
+        Double totalAmount = reservationService.calculateTotalAmount(room,checkinDate,checkoutDate);
+
+        model.addAttribute("user",user);
         model.addAttribute("customer", customer);
         model.addAttribute("nrc", customer.getNrc() != null ? customer.getNrc() : "");
         model.addAttribute("address", customer.getAddress() != null ? customer.getAddress() : "");
@@ -79,19 +84,8 @@ public class ReservationController {
         model.addAttribute("room", room);
         model.addAttribute("checkinDate", checkinDate);
         model.addAttribute("checkoutDate", checkoutDate);
-        model.addAttribute("user",user);
         model.addAttribute("paymentCards",paymentCards);
-
-//        if (customer != null) {
-//            if(customer.getNrc() != null && customer.getAddress() != null){
-//                model.addAttribute("customer",customer);
-//            }
-//            model.addAttribute("nrc", customer.getNrc() != null ? customer.getNrc() : "");
-//            model.addAttribute("address", customer.getAddress() != null ? customer.getAddress() : "");
-//        } else {
-//            Customer newCustomer = new Customer();
-//            model.addAttribute("customer", newCustomer);
-//        }
+        model.addAttribute("totalAmount",totalAmount);
 
         return "reservation-form";
     }
@@ -103,13 +97,13 @@ public class ReservationController {
                                      @RequestParam String nrc,
                                      @RequestParam String address,
                                      @RequestParam long paymentId,
-                                     HttpSession session,
-                                     Model model) {
+                                     HttpServletRequest request,
+                                     Model model,RedirectAttributes redirectAttributes) {
 
-        String username = (String) session.getAttribute("username199");
+        String username = MainController.getCookieValue(request,"username");
         if (username == null) {
-            model.addAttribute("error", "Please login first to make reservations.");
-            return "redirect:/users/login";
+            redirectAttributes.addFlashAttribute("error", "Please login first to make reservations");
+            return "redirect:/login";
         }
 
         User user = userService.findUserByUsername(username);
@@ -135,9 +129,6 @@ public class ReservationController {
                 customer.setAddress(address);
                 userService.saveCustomer(customer);
 
-                // update session attrs
-                session.setAttribute("123nrc", nrc);
-                session.setAttribute("123address", address);
             } else {
                 // update customer if info changed
                 boolean changed = false;
@@ -151,8 +142,6 @@ public class ReservationController {
                 }
                 if (changed) {
                     userService.saveCustomer(customer);
-                    session.setAttribute("123nrc", nrc);
-                    session.setAttribute("123address", address);
                 }
             }
 

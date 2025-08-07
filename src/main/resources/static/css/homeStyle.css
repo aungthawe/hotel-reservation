@@ -1,84 +1,184 @@
-
+/* ===================
+   Animations
+=================== */
 .fade-out {
-            animation: fadeOut 0.5s forwards;
-        }
+    animation: fadeOut 0.5s forwards;
+}
 .fade-in {
-            animation: fadeIn 0.5s forwards;
+    animation: fadeIn 0.5s forwards;
 }
 @keyframes fadeOut {
-            from {
-                opacity: 1;
-            }
-            to {
-                opacity: 0;
-            }
+    from { opacity: 1; }
+    to { opacity: 0; }
 }
-
 @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
+
+/* ===================
+   Offer Cards
+=================== */
 .offer-card {
-      background-color: #004aad;
-      color: #fff;
+    background-color: #004aad;
+    color: #fff;
+    border-radius: 10px;
+    padding: 15px;
 }
-    .offer-title {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-    .offer-description {
-      font-size: 1rem;
-    }
-    .btn-book {
-      background-color: #4b97f0;
-    }
-    .btn-book:hover {
-      background-color: #3a7ad1;
-    }
-    .btn-view-all {
-      background-color: #d9d9d9;
-      width:100px;
-    }
-    body {
-        color:black;
-    }
-    .btn-custom {
-        background-color: #a3c6de;
-        color: black;
-        border-radius: 10px;
-    }
-    .btn-custom:hover{
-        background-color: white;
-        color: black;
-    }
+.offer-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.offer-description {
+    font-size: 1rem;
+}
+.btn-book {
+    background-color: #4b97f0;
+    color: #fff;
+}
+.btn-book:hover {
+    background-color: #3a7ad1;
+}
+.btn-view-all {
+    background-color: #d9d9d9;
+    width: 100px;
+}
 
-    .light-blue {
-        background-color: #9cdbfc;
-    }
-    .dark-blue {
-        background-color: #78a9c5;
-    }
-    .table-container {
-        background-color: #9cdbfc;
-        border-radius: 10px;
-        padding: 10px;
-        height: 300px;
-        overflow-y: auto;
-    }
-    .sectionme {
-        width: 100%;
-        padding: 20px;
-        background: white;
-        color: black;
-        border-radius: 15px;
-        display: none;
-    }
-    .sectionme.active {
-      opacity: 1;
-      display: block;
-    }
+/* ===================
+   Base Colors
+=================== */
+body {
+    color: black;
+}
 
+/* Buttons */
+.btn-custom {
+    background-color: #a3c6de;
+    color: black;
+    border-radius: 10px;
+}
+.btn-custom:hover {
+    background-color: white;
+    color: black;
+}
+
+/* THEME BUTTONS */
+.btn-theme-primary {
+    background-color: #004aad;
+    color: #fff;
+    border-radius: 8px;
+}
+.btn-theme-primary:hover {
+    background-color: #4b97f0;
+    color: #fff;
+}
+.btn-theme-secondary {
+    background-color: #a3c6de;
+    color: #000;
+    border-radius: 8px;
+}
+.btn-theme-secondary:hover {
+    background-color: #9cdbfc;
+    color: #000;
+}
+
+/* ===================
+   Theme Backgrounds
+=================== */
+.light-blue {
+    background-color: #9cdbfc;
+}
+.dark-blue {
+    background-color: #78a9c5;
+}
+.bg-theme-light {
+    background-color: #a3c6de;
+}
+.bg-theme-dark {
+    background-color: #004aad;
+    color: #fff;
+}
+
+/* ===================
+   Table Container
+=================== */
+.table-container {
+    background-color: #9cdbfc;
+    border-radius: 10px;
+    padding: 10px;
+    height: 300px;
+    overflow-y: auto;
+}
+
+/* ===================
+   Sections
+=================== */
+.sectionme {
+    width: 100%;
+    padding: 20px;
+    background: white;
+    color: black;
+    border-radius: 15px;
+    display: none;
+}
+.sectionme.active {
+    opacity: 1;
+    display: block;
+}
+
+/* ===================
+   Links
+=================== */
+.no-style-link {
+    text-decoration: none;
+    color: inherit;
+}
+.no-style-link:hover {
+    color: #000;
+}
+
+/* ===================
+   Profile & Modals
+=================== */
+.profile-container {
+    position: relative;
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+}
+.profile-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #004aad;
+}
+.camera-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    cursor: pointer;
+}
+.profile-container:hover .camera-overlay {
+    opacity: 1;
+}
+
+/* Modal Image */
+.modal-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #004aad;
+}
