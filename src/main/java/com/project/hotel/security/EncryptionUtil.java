@@ -13,9 +13,14 @@ public class EncryptionUtil {
 
     @Autowired
     private  EncryptionConfig encryptionConfig;
+
     private static final String ALGORITHM = "AES";
 
     public String encrypt(String rawString) throws Exception {
+        if (rawString == null) {
+            throw new IllegalArgumentException("Cannot encrypt null value");
+        }
+
         String secretKey = encryptionConfig.getSecretKey();
         SecretKeySpec key = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM);
@@ -43,4 +48,5 @@ public class EncryptionUtil {
             return false;
         }
     }
+
 }

@@ -3,6 +3,7 @@ import com.project.hotel.entity.*;
 import com.project.hotel.repository.CustomerRepository;
 import com.project.hotel.repository.ReservationRepository;
 import com.project.hotel.repository.RoomRepository;
+import com.project.hotel.security.EncryptionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,17 +27,69 @@ public class ReservationService {
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    EncryptionUtil encryptionUtil;
 
-    public Reservation saveReservation(User user, Room room, LocalDate checkinDate, LocalDate checkoutDate, LocalDate reservationDate, String nrc, String address, Payment payment) {
+    public Reservation saveReservation(
+            User user,
+            Room room,
+            LocalDate checkinDate,
+            LocalDate checkoutDate,
+            LocalDate reservationDate,
+            String rawNrc,
+            String address,
+            Payment payment) {
+
         Customer existingCustomer = customerRepository.findByUserId(user.getId());
-        Customer customer = new Customer();
-        if(existingCustomer == null){
-            customer.setUser(user);
-            customer.setNrc(nrc);
-            customer.setAddress(address);
-            customerRepository.save(customer);
+        Customer customer;
+
+        String encryptedNrc = null;
+        if (rawNrc != null && !rawNrc.trim().isEmpty()) {
+            try {
+                encryptedNrc = encryptionUtil.encrypt(rawNrc);
+            } catch (Exception e) {
+                throw new RuntimeException("Customer nrc encryption fail: " + e.getMessage());
+            }
         }
-        customer = existingCustomer;
+
+        if (existingCustomer == null) {
+            // create new customer
+            customer = new Customer();
+            customer.setUser(user);
+            if (encryptedNrc != null) {
+                customer.setNrc(encryptedNrc);
+            }
+            customer.setAddress(address);
+            customer = customerRepository.save(customer);
+
+        } else {
+            // update customer if info changed
+            String existingEncryptedNrc = existingCustomer.getNrc();
+
+            if (existingEncryptedNrc == null || existingEncryptedNrc.trim().isEmpty()) {
+                // No existing stored NRC — if new one provided, set it
+                if (encryptedNrc != null) {
+                    existingCustomer.setNrc(encryptedNrc);
+                }
+            } else {
+                // existingEncryptedNrc is present: compare decrypted value with incoming rawNrc
+                if (rawNrc != null && !rawNrc.trim().isEmpty()) {
+                    try {
+                        String decryptedExisting = encryptionUtil.decrypt(existingEncryptedNrc);
+                        if (!rawNrc.equals(decryptedExisting)) {
+                            existingCustomer.setNrc(encryptedNrc); // update
+                        }
+                    } catch (Exception ex) {
+                        throw new RuntimeException("Checking Customer Nrc Fail: " + ex.getMessage());
+                    }
+                }
+            }
+
+            existingCustomer.setAddress(address);
+            customer = customerRepository.save(existingCustomer);
+        }
+
+        // Build and save the reservation
         Reservation reservation = new Reservation();
         reservation.setRoom(room);
         reservation.setCustomer(customer);

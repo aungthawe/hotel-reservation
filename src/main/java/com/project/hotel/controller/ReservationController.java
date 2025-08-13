@@ -4,6 +4,7 @@ import com.project.hotel.entity.*;
 import com.project.hotel.repository.CustomerRepository;
 import com.project.hotel.repository.RoomRepository;
 import com.project.hotel.repository.UserRepository;
+import com.project.hotel.security.EncryptionUtil;
 import com.project.hotel.service.PaymentService;
 import com.project.hotel.service.ReservationService;
 import com.project.hotel.service.RoomService;
@@ -38,10 +39,11 @@ public class ReservationController {
     private ReservationService reservationService;
     @Autowired
     private PaymentService paymentService;
+    @Autowired
+    private EncryptionUtil encryptionUtil;
 
     @GetMapping("/form")
     public String showReservationForm(@RequestParam long roomId,
-                                      @RequestParam String roomNumber,
                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkinDate,
                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkoutDate,
                                       Model model,RedirectAttributes redirectAttributes,
@@ -54,13 +56,13 @@ public class ReservationController {
 
         String username = MainController.getCookieValue(request,"username");
         if (username == null) {
-            model.addAttribute("error", "You must log in first");
+            model.addAttribute("error", "You need to have an account");
             return "login";
         }
 
         User user = userService.findUserByUsername(username);
         if (user == null) {
-            model.addAttribute("error", "You need have an account");
+            model.addAttribute("error", "You must log in first!");
             return "login";
         }
 
@@ -78,8 +80,6 @@ public class ReservationController {
 
         model.addAttribute("user",user);
         model.addAttribute("customer", customer);
-        model.addAttribute("nrc", customer.getNrc() != null ? customer.getNrc() : "");
-        model.addAttribute("address", customer.getAddress() != null ? customer.getAddress() : "");
 
         model.addAttribute("room", room);
         model.addAttribute("checkinDate", checkinDate);
@@ -98,7 +98,7 @@ public class ReservationController {
                                      @RequestParam String address,
                                      @RequestParam long paymentId,
                                      HttpServletRequest request,
-                                     Model model,RedirectAttributes redirectAttributes) {
+                                     Model model,RedirectAttributes redirectAttributes){
 
         String username = MainController.getCookieValue(request,"username");
         if (username == null) {
@@ -106,56 +106,47 @@ public class ReservationController {
             return "redirect:/login";
         }
 
-        User user = userService.findUserByUsername(username);
-        if (user == null) {
-            model.addAttribute("error", "User not found.");
-            return "reservation-form";
-        }
 
         Room room = roomService.getRoomById(roomId);
+        Payment payment = paymentService.getPaymentById(paymentId);
+        User user = userService.findUserByUsername(username);
+        String  decryptedNrc = "";
+
+        if (user == null) {
+            model.addAttribute("error", "User not found.");
+            return "redirect:/";
+        }
+        Customer customer = userService.findCustomerByUserId(user.getId());
+        if (customer == null) {
+            model.addAttribute("error", "User (customer) not found.");
+            return "redirect:/";
+        }
         if (room == null) {
             model.addAttribute("error", "Room not found.");
-            return "reservation-form";
+            return "redirect:/";
         }
 
         try {
-            Customer customer = userService.findCustomerByUserId(user.getId());
-
-            if (customer == null) {
-                // create new customer
-                customer = new Customer();
-                customer.setUser(user);
-                customer.setNrc(nrc);
-                customer.setAddress(address);
-                userService.saveCustomer(customer);
-
-            } else {
-                // update customer if info changed
-                boolean changed = false;
-                if (nrc != null && !nrc.equals(customer.getNrc())) {
-                    customer.setNrc(nrc);
-                    changed = true;
-                }
-                if (address != null && !address.equals(customer.getAddress())) {
-                    customer.setAddress(address);
-                    changed = true;
-                }
-                if (changed) {
-                    userService.saveCustomer(customer);
-                }
-            }
-
-            Payment payment = paymentService.getPaymentById(paymentId);
             LocalDate reservationDate = LocalDate.now();
-
             //Final Stage: Saving Reservation in Database
             Reservation reservation = reservationService.saveReservation(user, room, checkinDate, checkoutDate, reservationDate, nrc, address,payment);
-
+            model.addAttribute("nrc",nrc);
             model.addAttribute("reservation", reservation);
+            model.addAttribute("hotelName", "The Zypher Hotel");
+            model.addAttribute("hotelAddress", "123 Bago Street, Yangon");
+            model.addAttribute("hotelPhone", "+95 9667565456");
+            model.addAttribute("hotelEmail", "info@zypherhotel.com");
             return "reservation-confirmation";
 
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+            model.addAttribute("error", "Reservation Confirmation fail:" + e.getMessage());
+            model.addAttribute("room", room);
+            model.addAttribute("user", user);
+            model.addAttribute("payment", payment);
+            model.addAttribute("customer", customer);
+            model.addAttribute("nrc",nrc);
+            model.addAttribute("checkinDate", checkinDate);
+            model.addAttribute("checkoutDate", checkoutDate);//  critical fix
             return "reservation-form";
         }
     }
@@ -173,10 +164,9 @@ public class ReservationController {
             redirectAttributes.addFlashAttribute("inform","This room is not available for the selected dates.Choose other room.");
             return "redirect:/reservation/date-input?roomId="+roomId;
         }
-        Room room  = roomService.getRoomById(roomId);
 
-        return "redirect:/reservation/form?roomId="+roomId+
-                "&roomNumber="+room.getRoomNumber()+
+        redirectAttributes.addFlashAttribute("message","You can commit your payment process now");
+        return "redirect:/payment/form?roomId="+roomId+
                 "&checkinDate="+checkinDate+
                 "&checkoutDate="+checkoutDate;
     }
@@ -199,13 +189,11 @@ public class ReservationController {
     }
 
     @GetMapping("/cancel/{id}")
-    public String cancelReservation(@PathVariable Long id, RedirectAttributes redirectAttributes,HttpSession session) {
+    public String cancelReservation(@PathVariable Long id, RedirectAttributes redirectAttributes,HttpServletRequest request) {
+
         Reservation reservation = reservationService.findById(id);
-
-        User user = userService.findUserByUsername((String) session.getAttribute("username199"));
+        User user = userService.findUserByUsername(MainController.getCookieValue(request,"username"));
         Customer customer = userService.findCustomerByUserId(user.getId());
-
-
 
         if (!reservation.getCustomer().getId().equals(customer.getId())) {
             redirectAttributes.addFlashAttribute("error", "Unauthorized access.");
@@ -223,14 +211,14 @@ public class ReservationController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id,Model model,HttpSession session,RedirectAttributes redirectAttributes){
+    public String showEditForm(@PathVariable Long id,Model model,HttpServletRequest request,RedirectAttributes redirectAttributes){
         Reservation reservation = reservationService.findById(id);
         if(reservation == null){
-            model.addAttribute("error","Reservation not found");
+            redirectAttributes.addFlashAttribute("error","Reservation not found");
             return "redirect:/account";
         }
 
-        User user = userService.findUserByUsername((String) session.getAttribute("username199"));
+        User user = userService.findUserByUsername(MainController.getCookieValue(request,"username"));
         Customer customer = userService.findCustomerByUserId(user.getId());
 
         if (!reservation.getCustomer().getId().equals(customer.getId())) {
@@ -239,7 +227,7 @@ public class ReservationController {
         }
 
         if (!reservationService.canEditReservation(reservation)) {
-            model.addAttribute("error", "Cannot edit reservation within 2 days of check-in.");
+            redirectAttributes.addFlashAttribute("error", "Cannot edit reservation within 2 days of check-in.");
             return "redirect:/account";
         }
 

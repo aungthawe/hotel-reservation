@@ -93,7 +93,7 @@
               <p class="offer-description" th:text="${searchRooms.features}"></p>
               <span class="badge bg-light text-dark offer-description" th:text="${searchRooms.price+'$/night'}"></span>
               <div>
-                <a th:href="@{/reservation/form(roomId=${searchRooms.id}, roomNumber=${searchRooms.roomNumber}, checkinDate=${checkinDate}, checkoutDate=${checkoutDate})}" class="btn btn-book mt-1">Book Now</a>
+                <a th:href="@{/payment/form(roomId=${searchRooms.id}, roomNumber=${searchRooms.roomNumber}, checkinDate=${checkinDate}, checkoutDate=${checkoutDate})}" class="btn btn-book mt-1">Book Now</a>
               </div>
             </div>
           </div>
@@ -318,32 +318,71 @@
   </section>
 
   <!--reservationconfirmation-->
-  <section id="reservation-confirmation-section" th:fragment="reservationconfirmation" class="py-5" style="background-color: #add8e6; color:black;">
+  <section id="reservation-confirmation-section" th:fragment="reservationconfirmation" class="py-5" style="background-color: #f8f9fa;">
     <div class="container mt-5">
-      <div class="card">
-        <div class="card-header bg-success text-white">
-          <h2 class="mb-0">Reservation Confirmation</h2>
+      <div class="img-card card shadow-lg mx-auto" style="max-width: 700px;">
+        <div class="card-header bg-primary text-white text-center py-4">
+          <h2 class="mb-0">Reservation Confirmed!</h2>
         </div>
-        <div class="card-body">
-          <p>Dear <span th:text="${reservation.customer.user.name}">[User Name]</span>,</p>
-          <p>Thank you for your reservation. Here are your reservation details:</p>
-          <ul class="list-group mb-3">
-            <li class="list-group-item">Reservation ID: <span th:text="${reservation.id}">[Reservation ID]</span></li>
-            <li class="list-group-item">Room Number: <span th:text="${reservation.room.roomNumber}">[Room Number]</span></li>
-            <li class="list-group-item">Room Type: <span th:text="${reservation.room.roomType.typeName}">[Room Type]</span></li>
-            <li class="list-group-item">Check-in Date: <span th:text="${reservation.checkinDate}">[Check-in Date]</span></li>
-            <li class="list-group-item">Check-out Date: <span th:text="${reservation.checkoutDate}">[Check-out Date]</span></li>
-            <li class="list-group-item">Total Amount: <span th:text="${reservation.totalAmount}">[Total Amount]</span></li>
-            <li class="list-group-item">NRC: <span th:text="${reservation.customer.nrc}">[NRC]</span></li>
-            <li class="list-group-item">Address: <span th:text="${reservation.customer.address}">[Address]</span></li>
-          </ul>
-          <p>We look forward to your stay.</p>
-          <a href="/" class="btn btn-primary">Back to Home</a>
+        <div class="card-body p-5">
+          <div class="text-center mb-4">
+            <p class="mt-3">Dear <span class="font-weight-bold" th:text="${reservation.customer.user.name}">[User Name]</span>,</p>
+            <p>Thank you for choosing to stay with us. Your reservation is confirmed. Please find the details below.</p>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <strong>Reservation ID:</strong> <span th:text="${reservation.id}">[Reservation ID]</span>
+            </div>
+            <div class="col-md-6 mb-3">
+              <strong>Room Number:</strong> <span th:text="${reservation.room.roomNumber}">[Room Number]</span>
+            </div>
+            <div class="col-md-6 mb-3">
+              <strong>Room Type:</strong> <span th:text="${reservation.room.roomType.typeName}">[Room Type]</span>
+            </div>
+            <div class="col-md-6 mb-3">
+              <strong>Total Amount:</strong> <span th:text="${reservation.totalAmount}">[Total Amount]</span>
+            </div>
+            <div class="col-md-6 mb-3">
+              <strong>Check-in Date:</strong> <span th:text="${reservation.checkinDate}">[Check-in Date]</span>
+            </div>
+            <div class="col-md-6 mb-3">
+              <strong>Check-out Date:</strong> <span th:text="${reservation.checkoutDate}">[Check-out Date]</span>
+            </div>
+            <div class="col-md-6 mb-3">
+              <strong>NRC:</strong> <span th:text="${nrc}">[NRC]</span>
+            </div>
+            <div class="col-md-6 mb-3">
+              <strong>Address:</strong> <span th:text="${reservation.customer.address}">[Address]</span>
+            </div>
+          </div>
+
+          <hr class="my-4">
+
+          <h4 class="mb-3">Hotel Information</h4>
+          <p>
+            <strong>Hotel Name:</strong> <span th:text="${hotelName}">[Your Hotel Name]</span><br>
+            <strong>Address:</strong> <span th:text="${hotelAddress}">[Your Hotel Address]</span><br>
+            <strong>Phone:</strong> <span th:text="${hotelPhone}">[Your Hotel Phone Number]</span><br>
+            <strong>Email:</strong> <span th:text="${hotelEmail}">[Your Hotel Email]</span>
+          </p>
+
+          <p class="mt-4">
+            <strong>Important Notes:</strong><br>
+            - Check-in time is after 3:00 PM.<br>
+            - Check-out time is before 11:00 AM.<br>
+            - Please present this confirmation and a valid ID upon arrival.
+          </p>
+          <hr class="my-4">
+
+          <div class="text-center">
+            <p class="font-italic">We look forward to your stay!</p>
+            <button id="download-btn" class="btn btn-success mt-3"><i class="fas fa-download"></i> Save as Image</button>
+          </div>
         </div>
       </div>
     </div>
   </section>
-
 <!--  facilities-->
   <section th:fragment="facilities" class="py-5">
     <div class="container">This is facilities Page</div>

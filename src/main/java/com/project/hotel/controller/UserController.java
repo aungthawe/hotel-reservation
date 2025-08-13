@@ -138,10 +138,6 @@ public class UserController {
         boolean exists = userRepository.existsByEmail(email);
         return exists?"exists":"available";
     }
-    @GetMapping("/{username}/home")
-    public String getHomepage(Model model){
-        model.addAttribute("message","Hello my fucking user");
-        return "index";
-    }
+
 
 }

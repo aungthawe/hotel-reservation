@@ -130,7 +130,7 @@
 
               <div class="detail-item">
                 <label>NRC</label>
-                <p th:text="${customer.nrc}">12/ABC(N)123456</p>
+                <p th:text="${nrc}">12/ABC(N)123456</p>
               </div>
 
               <div class="detail-item">
@@ -361,7 +361,7 @@
                 <div th:object="${customer}">
                   <div class="mb-3">
                     <label class="form-label">NRC</label>
-                    <input type="text" th:field="*{nrc}" class="form-control" placeholder="Enter NRC" required />
+                    <input type="text" name="nrc" th:value="${nrc}" class="form-control" placeholder="Enter NRC" required />
                   </div>
 
                   <div class="mb-3">

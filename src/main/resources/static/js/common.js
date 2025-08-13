@@ -39,6 +39,7 @@ function showAllOfferRoom(){
           submitBtn.disabled = true;
       }
   }
+
   function checkEmail() {
       const email = document.getElementById("email").value;
       const messageSpan = document.getElementById("emailMessage");
@@ -70,7 +71,7 @@ function showAllOfferRoom(){
       }
   }
 
-//  to scroll to search result
+//
 //document.addEventListener("DOMContentLoaded", function () {
 //    const resultSection = document.getElementById("search-result-section");
 //    if (resultSection) {
@@ -78,8 +79,13 @@ function showAllOfferRoom(){
 //    }
 //  });
 
-//Scroll to
+//Scroll to for every part of web page
   document.addEventListener("DOMContentLoaded", function() {
+  const resultSection = document.getElementById("search-result-section");
+      if (resultSection) {
+        resultSection.scrollIntoView({ behavior: "smooth" });
+      }
+
     var targetId = /*[[${scrollTo}]]*/ '';
     if (!targetId) return;
 
@@ -140,3 +146,17 @@ document.getElementById("loginBtn").addEventListener("click", function () {
         }, 3000);
     }
 });
+
+document.getElementById('download-btn').addEventListener('click', function() {
+    const card = document.querySelector('img-card');
+
+    html2canvas(card).then(function(canvas) {
+      // Create a link element to download the image
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = 'reservation-confirmation.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  });

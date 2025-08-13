@@ -92,8 +92,8 @@ public class AdminController {
     }
 
     @GetMapping("/staff-home")
-    public String getStaffHome(HttpSession session, Model model,RedirectAttributes redirectAttributes){
-        String role = (String) session.getAttribute("usercookierole");
+    public String getStaffHome(HttpServletRequest request, Model model,RedirectAttributes redirectAttributes){
+        String role = MainController.getCookieValue(request,"role");
         if (role ==  null){
             redirectAttributes.addFlashAttribute("errorMessage", "Invalid attempt to access admin.");
             return "redirect:/error";
@@ -102,13 +102,13 @@ public class AdminController {
 
             List<Reservation> reservations = reservationService.getAllReservations();
             LocalDate today = LocalDate.now();
-            User user = userService.findUserByUsername((String)session.getAttribute("username199"));
+            User user = userService.findUserByUsername(MainController.getCookieValue(request,"username"));
             Staff staff = userService.findStaffByUserId(user.getId());
 
             model.addAttribute("reservations",reservations);
             model.addAttribute("date", today);
             model.addAttribute("staff",staff);
-            model.addAttribute("searchResults",session.getAttribute("searchResults"));
+            //model.addAttribute("searchResults",session.getAttribute("searchResults"));
 
             model.addAttribute("isstaff",true);
 

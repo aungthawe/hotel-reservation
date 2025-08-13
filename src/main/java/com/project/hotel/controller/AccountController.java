@@ -6,6 +6,7 @@ import com.project.hotel.entity.Reservation;
 import com.project.hotel.entity.User;
 import com.project.hotel.repository.CustomerRepository;
 import com.project.hotel.repository.UserRepository;
+import com.project.hotel.security.EncryptionUtil;
 import com.project.hotel.service.PaymentService;
 import com.project.hotel.service.ReservationService;
 import com.project.hotel.service.UserService;
@@ -37,17 +38,20 @@ public class AccountController {
     private CustomerRepository customerRepository;
     @Autowired
     private PaymentService paymentService;
+    @Autowired
+    private EncryptionUtil encryptionUtil;
 
     @GetMapping("")
     public String showAccountLayout(@RequestParam(defaultValue = "dashboard") String section, Model model, HttpSession session, HttpServletRequest request) {
         String username = MainController.getCookieValue(request, "username");
 
         if (username == null) {
-            model.addAttribute("message", "You haven't logged in yet, Log in to manage your account");
-            return "redirect:/login";
+            model.addAttribute("error", "You haven't logged in yet, Log in to manage your account");
+            return "login";
         }
         User user = userService.findUserByUsername(username);
         Customer customer = userService.findCustomerByUserId(user.getId());
+        String decryptedNrc;
 
         List<Reservation> reservations = reservationService.getReservationByCustomer(customer);
         Map<Long, Boolean> editableMap = new HashMap<>();
@@ -56,8 +60,17 @@ public class AccountController {
             editableMap.put(res.getId(), editable);
         }
 
+        try {
+            if (customer.getNrc() != null && !customer.getNrc().trim().isEmpty()) {
+                decryptedNrc = encryptionUtil.decrypt(customer.getNrc());
+            }else decryptedNrc = "No nrc";
+        } catch (Exception e) {
+            throw new RuntimeException("NRC decryption fail:"+e.getMessage());
+        }
+
         model.addAttribute("user", user);
         model.addAttribute("customer", customer);
+        model.addAttribute("nrc",decryptedNrc);
         model.addAttribute("reservations", reservations);
         model.addAttribute("editableMap", editableMap);
         model.addAttribute("section", section);
@@ -71,15 +84,29 @@ public class AccountController {
     public String showEditForm(HttpServletRequest request, RedirectAttributes redirectAttributes) {
         String username = MainController.getCookieValue(request,"username");
         User user = new User();
+
         if (username != null) {
             user = userService.findUserByUsername(username);
-            redirectAttributes.addFlashAttribute("error","You must have an account!!");
-            if (user == null) return "redirect:/login";
+
+            if (user == null) {
+                redirectAttributes.addFlashAttribute("error","You must have an account!!");
+                return "redirect:/login";
+            }
 
             Customer customer = userService.findCustomerByUserId(user.getId());
+            String decryptedNrc;
 
+            try {
+                if (customer.getNrc() != null && !customer.getNrc().trim().isEmpty()) {
+                    decryptedNrc = encryptionUtil.decrypt(customer.getNrc());
+                }else decryptedNrc = "No nrc";
+            } catch (Exception e) {
+                throw new RuntimeException("NRC decryption fail:"+e.getMessage());
+            }
             redirectAttributes.addFlashAttribute("user", user);
             redirectAttributes.addFlashAttribute("customer", customer);
+            redirectAttributes.addFlashAttribute("nrc",decryptedNrc);
+
             return "redirect:/account?section=edit";
         }else {
             redirectAttributes.addFlashAttribute("error", "You must have an account!!");
@@ -91,6 +118,7 @@ public class AccountController {
     public String updateAccount(
             @ModelAttribute("user") User updatedUser,
             @ModelAttribute("customer") Customer updatedCustomer,
+            @RequestParam("nrc") String nrc,
             HttpServletRequest request,
             RedirectAttributes redirectAttributes, Model model
     ) {
@@ -101,7 +129,14 @@ public class AccountController {
         user.setEmail(updatedUser.getEmail());
         user.setPhone(updatedUser.getPhone());
 
-        customer.setNrc(updatedCustomer.getNrc());
+
+        try {
+            if (nrc !=  null && !nrc.isEmpty()) {
+                customer.setNrc(encryptionUtil.encrypt(nrc));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("NRC encryption fail:"+e.getMessage());
+        }
         customer.setAddress(updatedCustomer.getAddress());
 
 
