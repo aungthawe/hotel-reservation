@@ -80,7 +80,7 @@ function showAllOfferRoom(){
 //  });
 
 //Scroll to for every part of web page
-  document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
   const resultSection = document.getElementById("search-result-section");
       if (resultSection) {
         resultSection.scrollIntoView({ behavior: "smooth" });
@@ -160,3 +160,22 @@ document.getElementById('download-btn').addEventListener('click', function() {
       document.body.removeChild(link);
     });
   });
+
+document.addEventListener("DOMContentLoaded", () => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.remove("opacity-0", "translate-y-6");
+              entry.target.classList.add("opacity-100", "translate-y-0", "transition-all", "duration-700");
+              observer.unobserve(entry.target); // animate only once
+            }
+          });
+        },
+        { threshold: 0.2 }
+      );
+
+      document.querySelectorAll(".review-card").forEach(card => {
+        observer.observe(card);
+      });
+    });

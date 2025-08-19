@@ -1,519 +1,648 @@
 <htmL xmlns:th="http://www.w3.org/1999/xhtml">
 
-  <!-- Search Box -->
-  <section th:fragment="searchbox" class="py-4" style="background-color: #002244;">
-  <form action="/rooms/search" method="get">
-    <div class="container bg-light p-4 rounded-pill d-flex justify-content-between align-items-center shadow" style="color:black;height:90px">
 
-      <!-- Room Type -->
-      <div>
-        <label class="form-label">Room Type</label>
-        <select class="form-control" id="roomType" name="roomType" required>
-          <option value="">Select Type</option>
-          <option th:each="type : ${session.roomTypes}"
-                  th:value="${type.id}"
-                  th:text="${type.typeName}"
-                  th:selected="${roomType} == ${type.id}">
-          </option>
-        </select>
-      </div>
+<!-- Minimal Floating Search Box -->
+<section th:fragment="searchBox" class="py-6  flex justify-center">
+    <form action="/rooms/search" method="get" class="w-full max-w-4xl">
+        <div class="flex items-center justify-between gap-3 bg-white/20 backdrop-blur-lg rounded-full p-4 shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1">
 
-      <!-- Check In -->
-      <div>
-        <label for="checkinDate" class="form-label">Check in</label>
-        <input type="date" id="checkinDate" name="checkinDate" class="form-control"
-               th:value="${checkinDate}" required>
-      </div>
+            <!-- Room Type -->
+            <div class="flex flex-col">
+                <label class="text-sm font-semibold text-[#18A0FB] px-2">Room Type</label>
+                <select id="roomType" name="roomType" required
+                        class="rounded-full px-3 py-1 border border-[#18A0FB] focus:outline-none focus:ring-2 focus:ring-[#FFC100] text-sm">
+                    <option value="">Select Type</option>
+                    <option th:each="type : ${session.roomTypes}"
+                            th:value="${type.id}"
+                            th:text="${type.typeName}"
+                            th:selected="${roomType} == ${type.id}">
+                    </option>
+                </select>
+            </div>
 
-      <!-- Check Out -->
-      <div>
-        <label for="checkoutDate" class="form-label">Check out</label>
-        <input type="date" id="checkoutDate" name="checkoutDate" class="form-control"
-               th:value="${checkoutDate}" required>
-      </div>
+            <!-- Check In -->
+            <div class="flex flex-col">
+                <label for="checkinDate" class="text-sm font-semibold text-[#18A0FB] px-2">Check in</label>
+                <input type="date" id="checkinDate" name="checkinDate" required
+                       th:value="${checkinDate}"
+                       class="rounded-full px-3 py-1 border border-[#18A0FB] focus:outline-none focus:ring-2 focus:ring-[#FFC100] text-sm">
+            </div>
 
-      <!-- Capacity -->
-      <div>
-        <label for="capacity" class="form-label">Room</label>
-        <select id="capacity" name="capacity" class="form-select" required>
-          <option th:value="1" th:selected="${capacity == 1}">1 person</option>
-          <option th:value="2" th:selected="${capacity == 2}">2 people</option>
-          <option th:value="3" th:selected="${capacity == 3}">3 people</option>
-        </select>
-      </div>
+            <!-- Check Out -->
+            <div class="flex flex-col">
+                <label for="checkoutDate" class="text-sm font-semibold text-[#18A0FB] px-2">Check out</label>
+                <input type="date" id="checkoutDate" name="checkoutDate" required
+                       th:value="${checkoutDate}"
+                       class="rounded-full px-3 py-1 border border-[#18A0FB] focus:outline-none focus:ring-2 focus:ring-[#FFC100] text-sm">
+            </div>
 
-      <!-- Search Button -->
-      <button type="submit" class="btn btn-primary rounded-pill" style="width: 100px; height: 100%;">Search</button>
-    </div>
-  </form>
+            <!-- Capacity -->
+            <div class="flex flex-col">
+                <label for="capacity" class="text-sm font-semibold text-[#18A0FB] px-2">Capacity</label>
+                <select id="capacity" name="capacity" required
+                        class="rounded-full px-3 py-1 border border-[#18A0FB] focus:outline-none focus:ring-2 focus:ring-[#FFC100] text-sm">
+                    <option th:value="1" th:selected="${capacity == 1}">1 person</option>
+                    <option th:value="2" th:selected="${capacity == 2}">2 people</option>
+                    <option th:value="3" th:selected="${capacity == 3}">3 people</option>
+                </select>
+            </div>
+
+            <!-- Search Button -->
+            <button type="submit"
+                    class="rounded-full px-4 py-2 bg-[#18A0FB] text-white text-sm font-semibold hover:scale-105 transition-transform">
+                Search
+            </button>
+
+        </div>
+    </form>
 </section>
 
-  <!--searchResult-->
-  <section id="search-result-section" th:fragment="searchresult" class="py-4" th:if="${searchResults}">
-    <div class="container">
-      <!-- Header Section -->
-      <div class="container mb-4 d-flex justify-content-between">
-        <div style="color: #002244;">
-          <h2 class="fw-bold">Your desire rooms,for any vactions!</h2>
-          <p>Escape the ordinary and embrace paradise with our exclusive Beach Bliss package!</p>
-        </div>
-        <div style="color: #002244;">
-          <span class="badge bg-dark fw-bold" th:text="${#lists.size(searchResults) + 'Properties Found'}"></span>
-        </div>
-      </div>
-      <div class="mx-auto text-center p-4 bg-warning rounded-5" th:if="${#lists.size(searchResults) == 0}">
-        <h2 style="color: #002244;" >Your desire rooms are not available at this moment.!!</h2>
-        <p>We are honor to serve you with other available rooms.</p>
-      </div>
+<!-- Search Results -->
+<section id="search-result-section" th:fragment="searchResult" th:if="${searchResults}" class="py-16 relative">
+    <div class="container mx-auto px-6 lg:px-12">
 
-      <div class="row d-flex gap-2 justify-content-evenly Roome-container">
-        <!-- Card 1 -->
-        <div th:each="searchRooms, iterStat : ${searchResults}"
-             th:if="${searchRooms.availability}"
-             th:attr="style=${iterStat.index >4 ? 'display:none;' : ''}"
-             class="offer-card col-9 col-md-5 col-lg-4 p-3 rounded-4">
-          <div class="row d-flex justify-content-between">
-            <div class="col-md-6">
-
-              <img th:if="${searchRooms.imagePath != null}"
-                   th:src="@{'/images/rooms/' + ${searchRooms.imagePath}}"
-                   alt="Room Image"
-                   class="rounded-4"
-                   style="width:100%; max-height:150px; object-fit:cover;" />
-
-              <img th:unless="${searchRooms.imagePath != null}"
-                   th:src="@{/images/offerimage.jpg}"
-                   alt="Fallback Image"
-                   class="rounded-4"
-                   style="width:100%; max-height:150px; object-fit:cover;" />
-
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10">
+            <div>
+                <h2 class="text-2xl md:text-3xl font-bold text-[#212529]">Your desire rooms, for any vacation!</h2>
+                <p class="text-[#212529]/70">Escape the ordinary and embrace paradise with our exclusive Beach Bliss package!</p>
             </div>
-            <div class="col-6 d-flex flex-column justify-content-between align-items-start" >
-              <h5 class="" th:text="${'Room Number:'+ searchRooms.roomNumber}"></h5>
-              <p class="offer-description" th:text="${searchRooms.features}"></p>
-              <span class="badge bg-light text-dark offer-description" th:text="${searchRooms.price+'$/night'}"></span>
-              <div>
-                <a th:href="@{/payment/form(roomId=${searchRooms.id}, roomNumber=${searchRooms.roomNumber}, checkinDate=${checkinDate}, checkoutDate=${checkoutDate})}" class="btn btn-book mt-1">Book Now</a>
-              </div>
+            <div class="mt-4 md:mt-0">
+        <span class="inline-block px-4 py-2 rounded-full bg-[#18A0FB] text-white font-semibold shadow-sm"
+              th:text="${#lists.size(searchResults) + ' Properties Found'}"></span>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <section th:fragment="booknow" class="py-4" >
-    <div class="container d-flex justify-content-center" >
-      <a href="/booking" class="btn btn-primary rounded-3 d-flex align-items-center gap-2" style="background-color: #002244;">
-        <i class="bi bi-calendar-check"></i> <!-- Bootstrap Booking Icon -->
-        <span>Book Now</span>
-      </a>
-    </div>
-  </section>
-
-  <!--offers-->
-  <section id="offer-section" th:fragment="offers" class="py-5" style="background-color: #002244;">
-    <div class="container">
-      <!-- Header Section -->
-      <div class="container mb-4 d-flex justify-content-between">
-        <div style="color:white">
-          <h2 class="fw-bold">Best Offer This Month</h2>
-          <p>Escape the ordinary and embrace paradise with our exclusive Beach Bliss package!</p>
+        <!-- No Results -->
+        <div class="mx-auto text-center p-6 bg-[#FFC107] rounded-2xl shadow-md"
+             th:if="${#lists.size(searchResults) == 0}">
+            <h2 class="text-xl font-bold text-[#212529]">Your desired rooms are not available at this moment!</h2>
+            <p class="text-[#212529]/80">We are honored to serve you with other available rooms.</p>
         </div>
-        <div>
-          <button id="viewAllForOfferRoom" onclick="showAllOfferRoom()" class="btn btn-view-all rounded-3 ">View All</button>
-        </div>
-      </div>
 
-      <!-- Offer Cards Section -->
-      <div class="Roome-container row d-flex gap-2 justify-content-evenly">
-        <!-- Card  -->
-        <div th:each="room, iterStat : ${session.discountedRooms}"
-             th:if="${room.discount != null and room.discount >= 1}"
-             th:attr="style=${iterStat.index > 4 ? 'display:none;' : ''}"
-             class="offer-card col-9 col-md-5 col-lg-4 p-3 rounded-4">
-          <div class="row d-flex justify-content-between">
-            <div class="col-md-6">
+        <!-- Results Grid -->
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-8">
 
-              <img th:if="${room.imagePath != null and room.imagePath != ''}"
-                   th:src="@{'/images/rooms/' + ${room.imagePath}}"
-                   alt="Room Image"
-                   class="rounded-4"
-                   style="width:100%; max-height:150px; object-fit:cover;" />
+            <!-- Room Card -->
+            <div th:each="searchRooms, iterStat : ${searchResults}"
+                 th:if="${searchRooms.availability}"
+                 th:attr="style=${iterStat.index >4 ? 'display:none;' : ''}"
+                 class="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden">
 
-              <img th:unless="${room.imagePath != null and room.imagePath != ''}"
-                   th:src="@{/images/offerimage.jpg}"
-                   alt="Fallback Image"
-                   class="rounded-4"
-                   style="width:100%; max-height:150px; object-fit:cover;" />
+                <!-- Image -->
+                <div class="h-48 w-full overflow-hidden">
+                    <img th:if="${searchRooms.imagePath != null}"
+                         th:src="@{'/images/rooms/' + ${searchRooms.imagePath}}"
+                         alt="Room Image"
+                         class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
+                    <img th:unless="${searchRooms.imagePath != null}"
+                         th:src="@{/images/offerimage.jpg}"
+                         alt="Fallback Image"
+                         class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
+                </div>
 
+                <!-- Content -->
+                <div class="p-5 flex flex-col justify-between h-full">
+                    <h5 class="text-lg font-semibold text-[#212529]" th:text="${'Room Number: ' + searchRooms.roomNumber}"></h5>
+                    <p class="mt-2 text-sm text-gray-600" th:text="${searchRooms.features}"></p>
+                    <span class="mt-2 inline-block bg-[#18A0FB]/10 text-[#18A0FB] font-medium px-3 py-1 rounded-full text-sm"
+                          th:text="${searchRooms.price + '$ / night'}"></span>
+                    <div class="mt-4">
+                        <a th:href="@{/payment/form(roomId=${searchRooms.id}, roomNumber=${searchRooms.roomNumber}, checkinDate=${checkinDate}, checkoutDate=${checkoutDate})}"
+                           class="inline-block w-full text-center rounded-xl bg-gradient-to-r from-[#FFC107] to-[#e6ac06] px-5 py-2 font-semibold text-[#212529] shadow-md hover:scale-105 transition-transform">
+                            Book Now
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="col-6">
-              <div class="offer-title" th:text="${room.discount} + '% OFF'"></div>
-              <p class="offer-description" th:text="${room.description}"></p>
-              <a th:href="@{/reservation/date-input(roomId=${room.id})}"
-                 class="btn btn-book mt-1">Book Now</a>
-            </div>
-          </div>
-        </div>
 
-      </div>
+        </div>
     </div>
+</section>
 
+<!-- Offers Section -->
+<section id="offer-section" th:fragment="offers" class="relative py-10">
+    <div class="container mx-auto px-6">
 
-  </section>
-
-  <!-- Explore -->
-  <section th:fragment="explore" class="py-5" >
-    <div class="container d-flex flex-column justify-content-evenly " style="color:black;">
-      <div class="row d-flex justify-content-between align-items-center mb-4" style="min-height: 300px;">
-        <div class="col-md-7 align-self-start">
-          <h2>Oceanfront Rooms</h2>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi sed dignissimos illo, inventore recusandae ratione accusamus est veritatis autem iusto.</p>
-          <a class="btn btn-success">Explore</a>
-        </div>
-        <div class="col-md-4">
-          <img src="/images/offerimage.jpg" alt="Oceanfront Room" class="rounded-4" style="width: 100%;height: 350px;">
-        </div>
-      </div>
-      <div class="row d-flex justify-content-between align-items-center mb-4" style="min-height: 300px;">
-        <div class="col-md-4 ">
-          <img src="/images/offerimage.jpg" alt="Oceanfront Room" class="rounded-4" style="width: 100%; height: 350px;">
-        </div>
-        <div class="col-md-7 align-self-start">
-          <h2>Oceanfront Rooms</h2>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi sed dignissimos illo, inventore recusandae ratione accusamus est veritatis autem iusto.</p>
-          <a class="btn btn-success">Explore</a>
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-[#18A0FB]">Best Offer This Month</h2>
+            <p class="mt-2 text-gray-600 max-w-2xl mx-auto">
+                Escape the ordinary and embrace paradise with our exclusive Beach Bliss package!
+            </p>
+<!--            <button id="viewAllForOfferRoom"-->
+<!--                    onclick="showAllOfferRoom()"-->
+<!--                    class="mt-6 px-6 py-2 rounded-xl bg-gradient-to-r from-[#18A0FB] to-[#00BFFF] text-white font-semibold shadow-lg hover:scale-105 transition-transform">-->
+<!--                View All-->
+<!--            </button>-->
         </div>
 
-      </div>
-      <!-- Repeat for other sections -->
-    </div>
-  </section>
+        <!-- Scroll Container -->
+        <div class="relative">
+            <div class="flex space-x-6 animate-scroll-x">
 
-  <!-- Reviews -->
-  <section th:fragment="reviews" class="py-5" style="background-color: #002244;">
-    <div class="container my-5">
-      <h2 class="text-center text-light mb-4">What Our Clients Say</h2>
-      <div class="row row-cols-1 row-cols-md-3 g-4">
+                <!-- Offer Card -->
+                <div th:each="room, iterStat : ${session.discountedRooms}"
+                     th:if="${room.discount != null and room.discount >= 1}"
+                     th:attr="style=${iterStat.index > 8 ? 'display:none;' : ''}"
+                     class="flex-shrink-0 w-80 bg-white/30 backdrop-blur-md rounded-3xl shadow-lg hover:shadow-2xl transition-transform transform hover:-translate-y-1">
 
-        <!-- Duplicate this card for more testimonials -->
-        <div class="col review-item" th:each="reviews :${session.reviews}" th:attr="data-id=${reviews.reviewId}">
-          <div class="card h-100 text-center shadow-sm">
-            <div class="card-body">
-              <div class="d-flex align-items-center justify-content-between mb-2">
-                <div class="d-flex align-items-center">
-                  <img src="/images/white men.jpg" alt="Client" class="rounded-circle me-2" width="50px" height="50px">
-                  <div>
-                    <h5 class="mb-0" th:text="${reviews.user.name}"></h5>
-                    <small th:text="${reviews.user.role}"></small>
+                    <!-- Image -->
+                    <div class="h-48 w-full rounded-t-3xl overflow-hidden">
+                        <img th:if="${room.imagePath != null and room.imagePath != ''}"
+                             th:src="@{'/images/rooms/' + ${room.imagePath}}"
+                             alt="Room Image"
+                             class="h-full w-full object-cover transition-transform duration-500 hover:scale-110"/>
+                        <img th:unless="${room.imagePath != null and room.imagePath != ''}"
+                             th:src="@{/images/offerimage.jpg}"
+                             alt="Fallback Image"
+                             class="h-full w-full object-cover transition-transform duration-500 hover:scale-110"/>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-5 text-center">
+              <span class="inline-block bg-[#18A0FB] text-[#212529] font-bold px-3 py-1 rounded-full text-sm shadow-md">
+                <span th:text="${room.discount} + '% OFF'"></span>
+              </span>
+                        <p class="mt-3 text-sm text-gray-700 line-clamp-3" th:text="${room.description}"></p>
+                        <a th:href="@{/reservation/date-input(roomId=${room.id})}"
+                           class="inline-block mt-4 px-5 py-2 rounded-xl bg-gradient-to-r from-[#FFC107] to-[#e6ac07] text-[#212529] font-semibold shadow-md hover:scale-105 transition-transform">
+                            Book Now
+                        </a>
+                    </div>
+                </div>
+                <!-- Offer Card -->
+                <div th:each="room, iterStat : ${session.discountedRooms}"
+                     th:if="${room.discount != null and room.discount >= 1}"
+                     th:attr="style=${iterStat.index > 8 ? 'display:none;' : ''}"
+                     class="flex-shrink-0 w-80 bg-white/30 backdrop-blur-md rounded-3xl shadow-lg hover:shadow-2xl transition-transform transform hover:-translate-y-1">
+
+                  <!-- Image -->
+                  <div class="h-48 w-full rounded-t-3xl overflow-hidden">
+                    <img th:if="${room.imagePath != null and room.imagePath != ''}"
+                         th:src="@{'/images/rooms/' + ${room.imagePath}}"
+                         alt="Room Image"
+                         class="h-full w-full object-cover transition-transform duration-500 hover:scale-110"/>
+                    <img th:unless="${room.imagePath != null and room.imagePath != ''}"
+                         th:src="@{/images/offerimage.jpg}"
+                         alt="Fallback Image"
+                         class="h-full w-full object-cover transition-transform duration-500 hover:scale-110"/>
+                  </div>
+
+                  <!-- Content -->
+                  <div class="p-5 text-center">
+                <span class="inline-block bg-[#18A0FB] text-[#212529] font-bold px-3 py-1 rounded-full text-sm shadow-md">
+                  <span th:text="${room.discount} + '% OFF'"></span>
+                </span>
+                    <p class="mt-3 text-sm text-gray-700 line-clamp-3" th:text="${room.description}"></p>
+                    <a th:href="@{/reservation/date-input(roomId=${room.id})}"
+                       class="inline-block mt-4 px-5 py-2 rounded-xl bg-gradient-to-r from-[#FFC107] to-[#e6ac07] text-[#212529] font-semibold shadow-md hover:scale-105 transition-transform">
+                      Book Now
+                    </a>
                   </div>
                 </div>
 
-                <div>
-                  <button class="btn btn-danger" th:if="${isadmin}" th:attr="onclick='deleteReview(' + ${reviews.reviewId} + ')'">
-                    Delete
-                    <i class="fas fa-trash"></i> <!-- FontAwesome Trash Icon -->
-                  </button>
+            </div>
+        </div>
+
+
+    </div>
+</section>
+
+<!-- Reviews -->
+<section th:fragment="reviews" class="py-16 relative">
+    <div class="container mx-auto px-6 lg:px-12">
+        <!-- Section Header -->
+        <h2 class="text-center text-3xl md:text-4xl font-bold text-gradient mb-10">
+            What Our Clients Say
+        </h2>
+
+        <!-- Reviews Grid -->
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+
+            <!-- Review Card -->
+            <div th:each="reviews : ${session.reviews}"
+                 th:attr="data-id=${reviews.reviewId}"
+                 class="review-card opacity-0 translate-y-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 relative">
+
+                <!-- Top Row: Avatar + Name + Role -->
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <img src="/images/user.png"
+                             alt="Client"
+                             class="w-12 h-12 rounded-full shadow-md object-cover"/>
+                        <div>
+                            <h5 class="text-lg font-semibold text-[#212529]" th:text="${reviews.user.name}"></h5>
+                            <p class="text-sm text-gray-500" th:text="${reviews.user.role}"></p>
+                        </div>
+                    </div>
+
+                    <!-- Admin Delete Button -->
+                    <button class="text-red-500 hover:text-red-700 transition"
+                            th:if="${isadmin}"
+                            th:attr="onclick='deleteReview(' + ${reviews.reviewId} + ')'">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </div>
-              </div>
-              <div class="d-flex align-items-center justify-content-start mb-2">
-                <span th:each="i : ${#numbers.sequence(1, reviews.stars)}" class="text-warning">&#9733;</span>
-              </div>
-              <p class="card-text" th:text="${reviews.content}"></p>
+
+                <!-- Rating Stars -->
+                <div class="flex items-center mb-3">
+          <span th:each="i : ${#numbers.sequence(1, reviews.stars)}"
+                class="text-[#FFC107] text-lg">&#9733;</span>
+                </div>
+
+                <!-- Review Content -->
+                <p class="text-gray-700 leading-relaxed" th:text="${reviews.content}"></p>
             </div>
-          </div>
         </div>
-
-
-      </div>
-
-      </div>
     </div>
+</section>
 
-  </section>
+<!-- Contact -->
+<section id="contact" th:fragment="contact" class="py-20 my-10  backdrop-blur-lg text-[#212529]">
+    <div class="container mx-auto px-6 lg:px-12">
 
-  <!--  room types-->
-  <section th:fragment="roomtypes" class="my-3">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-1 px-6 lg:px-12">
 
-    <div class="container">
-      <div th:each="type : ${session.roomTypes}" class="card rounded-4 mb-4" width="100%" >
-        <img src="/images/single room.jpg" class="card-img-top rounded-4" style="width:auto;max-height:400px;object-fit: cover;">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <p class="card-title" th:text="${type.typeName}"></p>
-            <a th:href="@{/rooms/searchbytype(type=${type.typeName})}" class="btn btn-success">Search</a>
-          </div>
+            <!-- Left Section: Contact Info -->
+            <div>
+                <h2 class="text-3xl font-bold text-[#002244] mb-4">Get In Touch</h2>
+                <p class="text-[#444] mb-6">
+                    For any inquiries, feedback, or assistance, please don’t hesitate to reach out to our dedicated
+                    team at <span class="font-semibold">BlueSky Hotel</span>. You can contact us via phone, email, or
+                    by filling out the contact form.
+                </p>
+
+                <!-- Address -->
+                <div class="mb-4">
+                    <p class="font-semibold flex items-center gap-2">
+                        <i class="bi bi-geo-alt text-[#18A0FB]"></i> Address
+                    </p>
+                    <p class="ml-6 text-sm">497 Evergreen Rd. Roseville, CA 95673</p>
+                </div>
+
+                <!-- Phone -->
+                <div class="mb-4">
+                    <p class="font-semibold flex items-center gap-2">
+                        <i class="bi bi-telephone text-[#18A0FB]"></i> Phone Number
+                    </p>
+                    <p class="ml-6 text-sm">+44 345 678 903</p>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-4">
+                    <p class="font-semibold flex items-center gap-2">
+                        <i class="bi bi-envelope text-[#18A0FB]"></i> E-mail
+                    </p>
+                    <p class="ml-6 text-sm">bluesky_hotels@gmail.com</p>
+                </div>
+
+                <!-- Socials -->
+                <div class="mt-6">
+                    <p class="font-semibold mb-2">Follow us:</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-[#212529] hover:text-[#18A0FB] transition"><i class="bi bi-facebook text-2xl"></i></a>
+                        <a href="#" class="text-[#212529] hover:text-[#18A0FB] transition"><i class="bi bi-twitter text-2xl"></i></a>
+                        <a href="#" class="text-[#212529] hover:text-[#18A0FB] transition"><i class="bi bi-instagram text-2xl"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Section: Contact Form -->
+            <div>
+                <div class="bg-white/30 backdrop-blur-lg rounded-2xl shadow-lg p-8 border border-gray-100 mx-auto">
+                    <h3 class="text-xl font-semibold text-[#002244] mb-6">Send a Message</h3>
+                    <form th:action="@{/contact/send}" method="post" class="space-y-4">
+                        <input type="text" name="name" placeholder="Your Name" required
+                               class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#18A0FB] transition"/>
+
+                        <input type="email" name="email" placeholder="Your Email Address" required
+                               class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#18A0FB] transition"/>
+
+                        <textarea name="message" rows="4" placeholder="Message..." required
+                                  class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#18A0FB] transition"></textarea>
+
+                        <button type="submit"
+                                class="px-6 py-3 rounded-xl bg-gradient-to-r from-[#18A0FB] to-[#00BFFF] text-white font-semibold shadow-md hover:scale-105 transition-transform">
+                            Submit
+                        </button>
+                    </form>
+                </div>
+            </div>
+
         </div>
-      </div>
+
+        <!-- Map Section -->
+        <div class="mt-12">
+            <div class="container mx-auto px-6 lg:px-12">
+                <div class="rounded-2xl overflow-hidden shadow-lg">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d9488.77163698483!2d96.13150567127059!3d16.84308843186273!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30c194962007f863%3A0x1ce0d39a47ca647c!2sLOTTE%20HOTEL%20YANGON!5e1!3m2!1sen!2smm!4v1737692660888!5m2!1sen!2smm"
+                            width="100%" height="500" style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
     </div>
+</section>
 
-  </section>
 
-  <!--contact-->
-  <section th:fragment="contact" class="py-5" style="background-color: #add8e6;color:black;">
-    <div class="container">
-      <div class="row d-flex justify-content-between">
-        <!-- Left Section: Contact Info -->
-        <div class="col-md-6 mb-4">
-          <h4 class="fw-bold">Get In Touch</h4>
-          <p>For any inquiries, feedback, or assistance, please don’t hesitate to reach out to our dedicated team at Hotel Zephyr. You can contact us via phone, email, or by filling out the contact form below.</p>
-
-          <div class="mb-3">
-            <p class="fw-bold mb-1"><i class="bi bi-geo-alt"></i> Address</p>
-            <p>497 Evergreen Rd. Roseville, CA 95673</p>
-          </div>
-
-          <div class="mb-3">
-            <p class="fw-bold mb-1"><i class="bi bi-telephone"></i> Phone Number</p>
-            <p>+44 345 678 903</p>
-          </div>
-
-          <div class="mb-3">
-            <p class="fw-bold mb-1"><i class="bi bi-envelope"></i> E-mail</p>
-            <p>luxury_hotels@gmail.com</p>
-          </div>
-
-          <div>
-            <p class="fw-bold">Follow us:</p>
-            <a href="#" class="me-2 text-dark"><i class="bi bi-facebook fs-4"></i></a>
-            <a href="#" class="me-2 text-dark"><i class="bi bi-twitter fs-4"></i></a>
-            <a href="#" class="text-dark"><i class="bi bi-instagram fs-4"></i></a>
-          </div>
-        </div>
-
-        <!-- Right Section: Message Form -->
-        <div class="col-md-4">
-          <div class="p-4 rounded-4" style="background-color: #cce7f0;">
-            <h5 class="fw-bold mb-4">Send a message</h5>
-            <form th:action="@{/contact/send}" method="post">
-              <div class="mb-3">
-                <input type="text" class="form-control" placeholder="Name" name="name" required>
-              </div>
-              <div class="mb-3">
-                <input type="email" class="form-control" placeholder="Your E-mail address" name="email" required>
-              </div>
-              <div class="mb-3">
-                <textarea class="form-control" rows="4" placeholder="Message..." name="message" required></textarea>
-              </div>
-              <button type="submit" class="btn btn-dark w-20">Submit</button>
-            </form>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Map Section -->
-      <div class="row mt-4">
-        <div class="col-12">
-          <div class="rounded-4 overflow-hidden">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d9488.77163698483!2d96.13150567127059!3d16.84308843186273!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30c194962007f863%3A0x1ce0d39a47ca647c!2sLOTTE%20HOTEL%20YANGON!5e1!3m2!1sen!2smm!4v1737692660888!5m2!1sen!2smm"
-                    width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-
-            </iframe>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!--reservationconfirmation-->
-  <section id="reservation-confirmation-section" th:fragment="reservationconfirmation" class="py-5" style="background-color: #f8f9fa;">
+<!--reservationconfirmation-->
+<section th:fragment="reservationconfirmation" id="reservation-confirmation-section" class="py-5"
+         style="background-color: #f8f9fa;">
     <div class="container mt-5">
-      <div class="img-card card shadow-lg mx-auto" style="max-width: 700px;">
-        <div class="card-header bg-primary text-white text-center py-4">
-          <h2 class="mb-0">Reservation Confirmed!</h2>
+        <div class="img-card card shadow-lg mx-auto" style="max-width: 700px;">
+            <div class="card-header bg-primary text-white text-center py-4">
+                <h2 class="mb-0">Reservation Confirmed!</h2>
+            </div>
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <p class="mt-3">Dear <span class="font-weight-bold" th:text="${reservation.customer.user.name}">[User Name]</span>,
+                    </p>
+                    <p>Thank you for choosing to stay with us. Your reservation is confirmed. Please find the details
+                        below.</p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong>Reservation ID:</strong> <span th:text="${reservation.id}">[Reservation ID]</span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Room Number:</strong> <span
+                            th:text="${reservation.room.roomNumber}">[Room Number]</span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Room Type:</strong> <span
+                            th:text="${reservation.room.roomType.typeName}">[Room Type]</span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Total Amount:</strong> <span th:text="${reservation.totalAmount}">[Total Amount]</span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Check-in Date:</strong> <span
+                            th:text="${reservation.checkinDate}">[Check-in Date]</span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Check-out Date:</strong> <span
+                            th:text="${reservation.checkoutDate}">[Check-out Date]</span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>NRC:</strong> <span th:text="${nrc}">[NRC]</span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Address:</strong> <span th:text="${reservation.customer.address}">[Address]</span>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <h4 class="mb-3">Hotel Information</h4>
+                <p>
+                    <strong>Hotel Name:</strong> <span th:text="${hotelName}">[Your Hotel Name]</span><br>
+                    <strong>Address:</strong> <span th:text="${hotelAddress}">[Your Hotel Address]</span><br>
+                    <strong>Phone:</strong> <span th:text="${hotelPhone}">[Your Hotel Phone Number]</span><br>
+                    <strong>Email:</strong> <span th:text="${hotelEmail}">[Your Hotel Email]</span>
+                </p>
+
+                <p class="mt-4">
+                    <strong>Important Notes:</strong><br>
+                    - Check-in time is after 3:00 PM.<br>
+                    - Check-out time is before 11:00 AM.<br>
+                    - Please present this confirmation and a valid ID upon arrival.
+                </p>
+                <hr class="my-4">
+
+                <div class="text-center">
+                    <p class="font-italic">We look forward to your stay!</p>
+                    <button id="download-btn" class="btn btn-success mt-3"><i class="fas fa-download"></i> Save as Image
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="card-body p-5">
-          <div class="text-center mb-4">
-            <p class="mt-3">Dear <span class="font-weight-bold" th:text="${reservation.customer.user.name}">[User Name]</span>,</p>
-            <p>Thank you for choosing to stay with us. Your reservation is confirmed. Please find the details below.</p>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <strong>Reservation ID:</strong> <span th:text="${reservation.id}">[Reservation ID]</span>
-            </div>
-            <div class="col-md-6 mb-3">
-              <strong>Room Number:</strong> <span th:text="${reservation.room.roomNumber}">[Room Number]</span>
-            </div>
-            <div class="col-md-6 mb-3">
-              <strong>Room Type:</strong> <span th:text="${reservation.room.roomType.typeName}">[Room Type]</span>
-            </div>
-            <div class="col-md-6 mb-3">
-              <strong>Total Amount:</strong> <span th:text="${reservation.totalAmount}">[Total Amount]</span>
-            </div>
-            <div class="col-md-6 mb-3">
-              <strong>Check-in Date:</strong> <span th:text="${reservation.checkinDate}">[Check-in Date]</span>
-            </div>
-            <div class="col-md-6 mb-3">
-              <strong>Check-out Date:</strong> <span th:text="${reservation.checkoutDate}">[Check-out Date]</span>
-            </div>
-            <div class="col-md-6 mb-3">
-              <strong>NRC:</strong> <span th:text="${nrc}">[NRC]</span>
-            </div>
-            <div class="col-md-6 mb-3">
-              <strong>Address:</strong> <span th:text="${reservation.customer.address}">[Address]</span>
-            </div>
-          </div>
-
-          <hr class="my-4">
-
-          <h4 class="mb-3">Hotel Information</h4>
-          <p>
-            <strong>Hotel Name:</strong> <span th:text="${hotelName}">[Your Hotel Name]</span><br>
-            <strong>Address:</strong> <span th:text="${hotelAddress}">[Your Hotel Address]</span><br>
-            <strong>Phone:</strong> <span th:text="${hotelPhone}">[Your Hotel Phone Number]</span><br>
-            <strong>Email:</strong> <span th:text="${hotelEmail}">[Your Hotel Email]</span>
-          </p>
-
-          <p class="mt-4">
-            <strong>Important Notes:</strong><br>
-            - Check-in time is after 3:00 PM.<br>
-            - Check-out time is before 11:00 AM.<br>
-            - Please present this confirmation and a valid ID upon arrival.
-          </p>
-          <hr class="my-4">
-
-          <div class="text-center">
-            <p class="font-italic">We look forward to your stay!</p>
-            <button id="download-btn" class="btn btn-success mt-3"><i class="fas fa-download"></i> Save as Image</button>
-          </div>
-        </div>
-      </div>
     </div>
-  </section>
-<!--  facilities-->
-  <section th:fragment="facilities" class="py-5">
-    <div class="container">This is facilities Page</div>
+</section>
 
-  </section>
-  <!--terms and conditions-->
-  <section th:fragment="terms" class="py-5" >
+<!-- Facilities Section -->
+<section th:fragment="facilities" id="facilities" class="relative py-20 px-6 lg:px-8 backdrop-blur-md overflow-hidden">
+    <div class="max-w-6xl mx-auto text-center">
+        <h2 class="text-3xl sm:text-4xl font-bold text-gradient">Our Facilities</h2>
+        <p class="mt-4 text-lg text-[#212529]/80">We provide world-class amenities to make your stay unforgettable.</p>
+    </div>
+
+    <!-- Scrolling Row -->
+    <div class="mt-12 relative">
+        <div class="flex gap-8 animate-scroll-x-reverse w-max">
+            <!-- Facility Item -->
+            <div class="min-w-[280px] p-6 bg-white/20 backdrop-blur-md rounded-2xl shadow-md hover:shadow-xl transition">
+                <img src="/images/pool.jpg" alt="Swimming Pool" class="w-full h-48 object-cover rounded-xl mb-4">
+                <h3 class="text-xl font-semibold">Infinity Pool</h3>
+                <p class="mt-2 text-sm text-[#212529]/70">Relax and enjoy our rooftop infinity pool with a panoramic
+                    city view.</p>
+            </div>
+
+            <div class="min-w-[280px] p-6 bg-white/20 backdrop-blur-md rounded-2xl shadow-md hover:shadow-xl transition">
+                <img src="/images/spa.jpg" alt="Spa" class="w-full h-48 object-cover rounded-xl mb-4">
+                <h3 class="text-xl font-semibold">Luxury Spa</h3>
+                <p class="mt-2 text-sm text-[#212529]/70">Pamper yourself with rejuvenating spa treatments and
+                    massages.</p>
+            </div>
+
+            <div class="min-w-[280px] p-6 bg-white/20 backdrop-blur-md rounded-2xl shadow-md hover:shadow-xl transition">
+                <img src="/images/gym.jpg" alt="Gym" class="w-full h-48 object-cover rounded-xl mb-4">
+                <h3 class="text-xl font-semibold">Fitness Center</h3>
+                <p class="mt-2 text-sm text-[#212529]/70">Stay fit during your stay with our fully equipped modern
+                    gym.</p>
+            </div>
+
+            <div class="min-w-[280px] p-6 bg-white/20 backdrop-blur-md rounded-2xl shadow-md hover:shadow-xl transition">
+                <img src="/images/restaurant.jpg" alt="Restaurant" class="w-full h-48 object-cover rounded-xl mb-4">
+                <h3 class="text-xl font-semibold">Fine Dining</h3>
+                <p class="mt-2 text-sm text-[#212529]/70">Savor delicious cuisines from around the world at our
+                    signature restaurant.</p>
+            </div>
+
+            <div class="min-w-[280px] p-6 bg-white/20 backdrop-blur-md rounded-2xl shadow-md hover:shadow-xl transition">
+                <img src="/images/bar.jpg" alt="Bar" class="w-full h-48 object-cover rounded-xl mb-4">
+                <h3 class="text-xl font-semibold">Sky Lounge</h3>
+                <p class="mt-2 text-sm text-[#212529]/70">Unwind with cocktails and music at our rooftop sky lounge.</p>
+            </div>
+
+            <div class="min-w-[280px] p-6 bg-white/20 backdrop-blur-md rounded-2xl shadow-md hover:shadow-xl transition">
+                <img src="/images/conference.jpg" alt="Conference Hall"
+                     class="w-full h-48 object-cover rounded-xl mb-4">
+                <h3 class="text-xl font-semibold">Conference Hall</h3>
+                <p class="mt-2 text-sm text-[#212529]/70">Host meetings and events in our spacious, fully-equipped
+                    conference halls.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--terms and conditions-->
+<section th:fragment="terms" class="py-5">
 
     <div class="bg-light">
-    <div class="container my-5">
-      <div class="card shadow rounded-4">
-        <div class="card-body p-4">
-          <h2 class="text-center text-primary mb-4"> Terms & Conditions</h2>
+        <div class="container my-5">
+            <div class="card shadow rounded-4">
+                <div class="card-body p-4">
+                    <h2 class="text-center text-primary mb-4"> Terms & Conditions</h2>
 
-          <!-- Booking Policy -->
-          <h5 class="fw-bold text-dark mt-4">1. Booking Policy</h5>
-          <ul class="text-muted">
-            <li>All reservations must be made online or through our front desk.</li>
-            <li>Guests must be at least 18 years old to make a reservation.</li>
-            <li>A valid ID and payment information are required at the time of booking.</li>
-          </ul>
+                    <!-- Booking Policy -->
+                    <h5 class="fw-bold text-dark mt-4">1. Booking Policy</h5>
+                    <ul class="text-muted">
+                        <li>All reservations must be made online or through our front desk.</li>
+                        <li>Guests must be at least 18 years old to make a reservation.</li>
+                        <li>A valid ID and payment information are required at the time of booking.</li>
+                    </ul>
 
-          <!-- Payment Policy -->
-          <h5 class="fw-bold text-dark mt-4">2. Payment Policy</h5>
-          <ul class="text-muted">
-            <li>Full payment is required at the time of reservation.</li>
-            <li>All prices include applicable taxes and service charges unless stated otherwise.</li>
-            <li>Accepted payment methods include VISA, MasterCard, PayPal, and AMEX.</li>
-          </ul>
+                    <!-- Payment Policy -->
+                    <h5 class="fw-bold text-dark mt-4">2. Payment Policy</h5>
+                    <ul class="text-muted">
+                        <li>Full payment is required at the time of reservation.</li>
+                        <li>All prices include applicable taxes and service charges unless stated otherwise.</li>
+                        <li>Accepted payment methods include VISA, MasterCard, PayPal, and AMEX.</li>
+                    </ul>
 
-          <!-- Cancellation & Modification -->
-          <h5 class="fw-bold text-dark mt-4">3. Cancellation & Modification Policy</h5>
-          <ul class="text-muted">
-            <li>Cancellations and modifications must be made at least <strong>2 days before</strong> the check-in date.</li>
-            <li>If changes are made within 2 days of the check-in date, <strong>no refund</strong> will be issued.</li>
-            <li>Refunds are processed only if the cancellation complies with our cancellation policy.</li>
-            <li>All refund requests will be reviewed and processed within 7 business days.</li>
-          </ul>
+                    <!-- Cancellation & Modification -->
+                    <h5 class="fw-bold text-dark mt-4">3. Cancellation & Modification Policy</h5>
+                    <ul class="text-muted">
+                        <li>Cancellations and modifications must be made at least <strong>2 days before</strong> the
+                            check-in date.
+                        </li>
+                        <li>If changes are made within 2 days of the check-in date, <strong>no refund</strong> will be
+                            issued.
+                        </li>
+                        <li>Refunds are processed only if the cancellation complies with our cancellation policy.</li>
+                        <li>All refund requests will be reviewed and processed within 7 business days.</li>
+                    </ul>
 
-          <!-- Check-in / Check-out -->
-          <h5 class="fw-bold text-dark mt-4">4. Check-in / Check-out Policy</h5>
-          <ul class="text-muted">
-            <li>Check-in time: <strong>2:00 PM</strong></li>
-            <li>Check-out time: <strong>11:00 AM</strong></li>
-            <li>Early check-in or late check-out may be available upon request and may incur additional charges.</li>
-          </ul>
+                    <!-- Check-in / Check-out -->
+                    <h5 class="fw-bold text-dark mt-4">4. Check-in / Check-out Policy</h5>
+                    <ul class="text-muted">
+                        <li>Check-in time: <strong>2:00 PM</strong></li>
+                        <li>Check-out time: <strong>11:00 AM</strong></li>
+                        <li>Early check-in or late check-out may be available upon request and may incur additional
+                            charges.
+                        </li>
+                    </ul>
 
-          <!-- Guest Responsibilities -->
-          <h5 class="fw-bold text-dark mt-4">5. Guest Responsibilities</h5>
-          <ul class="text-muted">
-            <li>Guests are responsible for maintaining the cleanliness and condition of the room.</li>
-            <li>Any damages to property will be charged to the guest’s account.</li>
-            <li>Smoking is strictly prohibited in all rooms. Violation may result in a penalty fee.</li>
-            <li>Pets are not allowed unless explicitly mentioned during reservation.</li>
-          </ul>
+                    <!-- Guest Responsibilities -->
+                    <h5 class="fw-bold text-dark mt-4">5. Guest Responsibilities</h5>
+                    <ul class="text-muted">
+                        <li>Guests are responsible for maintaining the cleanliness and condition of the room.</li>
+                        <li>Any damages to property will be charged to the guest’s account.</li>
+                        <li>Smoking is strictly prohibited in all rooms. Violation may result in a penalty fee.</li>
+                        <li>Pets are not allowed unless explicitly mentioned during reservation.</li>
+                    </ul>
 
-          <!-- Privacy Policy -->
-          <h5 class="fw-bold text-dark mt-4">6. Privacy & Security</h5>
-          <ul class="text-muted">
-            <li>All personal data is handled in accordance with our <a href="/privacy" class="link-primary">Privacy Policy</a>.</li>
-            <li>Payment information is encrypted and not stored in plaintext on our systems.</li>
-          </ul>
+                    <!-- Privacy Policy -->
+                    <h5 class="fw-bold text-dark mt-4">6. Privacy & Security</h5>
+                    <ul class="text-muted">
+                        <li>All personal data is handled in accordance with our <a href="/privacy" class="link-primary">Privacy
+                            Policy</a>.
+                        </li>
+                        <li>Payment information is encrypted and not stored in plaintext on our systems.</li>
+                    </ul>
 
-          <!-- Contact -->
-          <h5 class="fw-bold text-dark mt-4">7. Contact Information</h5>
-          <p class="text-muted">
-            If you have questions about these terms, please contact us at:
-            <br><strong>Email:</strong> support@yourhotel.com
-            <br><strong>Phone:</strong> +123-456-7890
-            <br><strong>Address:</strong> 123 Main St, City, Country
-          </p>
+                    <!-- Contact -->
+                    <h5 class="fw-bold text-dark mt-4">7. Contact Information</h5>
+                    <p class="text-muted">
+                        If you have questions about these terms, please contact us at:
+                        <br><strong>Email:</strong> support@yourhotel.com
+                        <br><strong>Phone:</strong> +123-456-7890
+                        <br><strong>Address:</strong> 123 Main St, City, Country
+                    </p>
 
-          <!-- Accept -->
-          <div class="text-center mt-4">
-            <a href="/" class="btn btn-outline-primary rounded-3">← Back to Home</a>
-          </div>
+                    <!-- Accept -->
+                    <div class="text-center mt-4">
+                        <a href="/" class="btn btn-outline-primary rounded-3">← Back to Home</a>
+                    </div>
 
+                </div>
+            </div>
         </div>
-      </div>
     </div>
+</section>
+
+<!-- Review Form -->
+<section th:fragment="reviewForm" class="py-12 ">
+    <div class="container max-w-2xl px-6">
+        <h5 class="text-2xl font-bold text-[#212529] mb-6 text-center">Leave a Review</h5>
+
+        <form th:action="@{/review/submit}" method="post"
+              class="bg-white/50 backdrop-blur-md shadow-lg rounded-2xl p-8 space-y-6 border border-gray-200">
+
+            <!-- Star Rating -->
+            <div>
+                <label class="block text-sm font-semibold text-[#212529] mb-3">Rating</label>
+                <div class="flex space-x-2 justify-center">
+                    <!-- Hidden input to store the rating -->
+                    <input type="hidden" id="stars" name="stars" required>
+
+                    <!-- Stars -->
+                    <span class="star text-3xl cursor-pointer text-gray-300 hover:text-[#FFC107] transition"
+                          data-value="1">&#9733;</span>
+                    <span class="star text-3xl cursor-pointer text-gray-300 hover:text-[#FFC107] transition"
+                          data-value="2">&#9733;</span>
+                    <span class="star text-3xl cursor-pointer text-gray-300 hover:text-[#FFC107] transition"
+                          data-value="3">&#9733;</span>
+                    <span class="star text-3xl cursor-pointer text-gray-300 hover:text-[#FFC107] transition"
+                          data-value="4">&#9733;</span>
+                    <span class="star text-3xl cursor-pointer text-gray-300 hover:text-[#FFC107] transition"
+                          data-value="5">&#9733;</span>
+                </div>
+            </div>
+
+            <!-- Review Content -->
+            <div>
+                <label for="content" class="block text-sm font-semibold text-[#212529] mb-2">Your Review</label>
+                <textarea id="content" name="content" rows="4" required
+                          placeholder="Write your review here..."
+                          class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#18A0FB] transition"></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit"
+                        class="px-6 py-3 rounded-xl bg-gradient-to-r from-[#18A0FB] to-[#00BFFF] text-white font-semibold shadow-md hover:scale-105 transition-transform">
+                    Submit Review
+                </button>
+            </div>
+        </form>
     </div>
-  </section>
 
-  <!--reviews form-->
-  <section th:fragment="reviewform" class="py-4">
-    <div class="container">
-      <h5 class="fw-bold mb-3">Leave a Review</h5>
-      <form th:action="@{/review/submit}" method="post">
-        <div class="mb-3">
-          <label for="stars" class="form-label">Rating</label>
-          <select id="stars" name="stars" class="form-select" required>
-            <option value="" disabled selected>Select a rating</option>
-            <option th:each="i : ${#numbers.sequence(1, 5)}" th:value="${i}" th:text="${i} + ' Stars'"></option>
-          </select>
-        </div>
+</section>
 
-        <div class="mb-3">
-          <label for="content" class="form-label">Your Review</label>
-          <textarea class="form-control" id="content" name="content" rows="3" placeholder="Write your review here..."></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Submit Review</button>
-      </form>
-    </div>
-  </section>
 
 <!--  custom alert-->
-  <div th:fragment="floatingAlerts" id="floating-alerts" class="position-fixed top-0 start-50 translate-middle-x mt-3 w-100" style="max-width:600px; pointer-events:none; z-index: 2050;">
-    <div th:if="${message}" class="floating-alert alert alert-success d-flex align-items-center justify-content-between shadow-lg rounded-4"
+<div th:fragment="floatingAlerts" id="floating-alerts"
+     class="position-fixed top-0 start-50 translate-middle-x mt-3 w-100"
+     style="max-width:600px; pointer-events:none; z-index: 2050;">
+    <div th:if="${message}"
+         class="floating-alert alert alert-success d-flex align-items-center justify-content-between shadow-lg rounded-4"
          role="alert" data-type="success">
-      <div>
-        <strong>Success:</strong> <span th:text="${message}">Operation completed.</span>
-      </div>
-      <button type="button" class="btn-close ms-3" aria-label="Close" onclick="dismissFloatingAlert(this)"></button>
+        <div>
+            <strong>Success:</strong> <span th:text="${message}">Operation completed.</span>
+        </div>
+        <button type="button" class="btn-close ms-3" aria-label="Close" onclick="dismissFloatingAlert(this)"></button>
     </div>
 
-    <div th:if="${param.logout}" class="floating-alert alert alert-success d-flex align-items-center justify-content-between shadow-lg rounded-4"
+    <div th:if="${param.logout}"
+         class="floating-alert alert alert-success d-flex align-items-center justify-content-between shadow-lg rounded-4"
          role="alert" data-type="success">
-      <div>
-        <strong>Success:</strong> <span>You have been successfully loged out</span>
-      </div>
-      <button type="button" class="btn-close ms-3" aria-label="Close" onclick="dismissFloatingAlert(this)"></button>
+        <div>
+            <strong>Success:</strong> <span>You have been successfully loged out</span>
+        </div>
+        <button type="button" class="btn-close ms-3" aria-label="Close" onclick="dismissFloatingAlert(this)"></button>
     </div>
 
-    <div th:if="${error}" class="floating-alert alert alert-danger d-flex align-items-center justify-content-between shadow-lg rounded-4"
+    <div th:if="${error}"
+         class="floating-alert alert alert-danger d-flex align-items-center justify-content-between shadow-lg rounded-4"
          role="alert" data-type="error">
-      <div>
-        <strong>Error:</strong> <span th:text="${error}">Something went wrong.</span>
-      </div>
-      <button type="button" class="btn-close ms-3" aria-label="Close" onclick="dismissFloatingAlert(this)"></button>
+        <div>
+            <strong>Error:</strong> <span th:text="${error}">Something went wrong.</span>
+        </div>
+        <button type="button" class="btn-close ms-3" aria-label="Close" onclick="dismissFloatingAlert(this)"></button>
     </div>
-  </div>
+</div>
 
 </htmL>

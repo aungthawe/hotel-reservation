@@ -1,36 +1,38 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.w3.org/1999/xhtml">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Zypher Hotel</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link th:href="@{/css/homeStyle.css}" rel="stylesheet">
-  <link th:href="@{/css/customAlert.css}" rel="stylesheet">
-</head>
-<body>
 
-<div th:replace="fragments/header :: header"></div>
+<head th:replace="fragments/header :: siteHead"></head>
 
+<body class="relative antialiased overflow-x-hidden">
 <!--alert-->
 <div th:replace="fragments/common-fragment :: floatingAlerts"></div>
 
-<div th:replace="fragments/header :: herocarousel"></div>
+<!-- Upper Left Floating Ball -->
+<div class="fixed top-1/6 left-1/4 -z-10 transform -translate-x-1/4 -translate-y-1/4" aria-hidden="true">
+  <div class="w-[35vw] h-[45vw] md:w-[35rem] md:h-[25rem] bg-[#18A0FB] rounded-full filter blur-3xl opacity-30"></div>
+</div>
+
+<!-- Lower Right Floating Ball -->
+<div class="fixed bottom-1/4 right-1/3 -z-10 transform translate-x-1/4 translate-y-1/4" aria-hidden="true">
+  <div class="w-[45vw] h-[40vw] md:w-[20rem] md:h-[30rem] bg-[#18A0FB] rounded-full filter blur-3xl opacity-30"></div>
+</div>
+
+<div th:replace="fragments/header :: header"></div>
+
+<div th:replace="fragments/header :: heroSection"></div>
 
 <!--admin section-->
-<div th:replace="fragments/admin-fragment :: adminsection"></div>
+<div th:replace="fragments/admin-fragment :: adminSection"></div>
 
-<div th:replace="fragments/common-fragment :: searchbox"></div>
+<div th:replace="fragments/common-fragment :: searchBox"></div>
 
-<div th:replace="fragments/common-fragment :: searchresult"></div>
+<div th:replace="fragments/common-fragment :: searchResult"></div>
 
 <div th:replace="fragments/admin-fragment :: staff"></div>
 
-<div th:replace="fragments/admin-fragment :: reportlist"></div>
+<div th:replace="fragments/admin-fragment :: reportList"></div>
 
 <div th:replace="fragments/common-fragment :: offers"></div>
-
-<div th:replace="fragments/common-fragment :: explore"></div>
 
 <div th:replace="fragments/common-fragment :: reviews"></div>
 

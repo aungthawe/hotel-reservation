@@ -31,6 +31,6 @@ public class ContactController {
             e.printStackTrace();
         }
 
-        return "redirect:/contact";
+        return "redirect:/#contact";
     }
 }

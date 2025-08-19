@@ -1,21 +1,51 @@
-<!-- templates/fragments/footer.html -->
-<footer th:fragment="footer" class="bg-dark text-white py-4" >
-  <div class="container d-flex justify-content-between">
+
+<footer th:fragment="footer" class="bg-[#18A0FB]/40  py-10 mt-16">
+  <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
+
+    <!-- Hotel Info -->
     <div>
-      <h2>The Zephyr Hotel</h2>
-      <p>28483 Yadana Rd. Bago, CA BT765</p>
-      <p>+95 9878678678</p>
-      <p>hotel_zephyr@gmail.com</p>
+      <h2 class="text-2xl font-bold mb-4">The Zephyr Hotel</h2>
+      <p class="text-sm opacity-90">28483 Yadana Rd. Bago, CA BT765</p>
+      <p class="text-sm opacity-90">+95 9878678678</p>
+      <p class="text-sm opacity-90">hotel_bluesky@gmail.com</p>
     </div>
+
+    <!-- Quick Links -->
     <div>
-      <a href="about.html" class="text-white text-decoration-none">About Us</a><br>
-      <a th:href="@{/contact}" class="text-white text-decoration-none">Contact Us</a><br>
-      <a th:href="@{/terms}" class="text-white text-decoration-none">Terms & Conditions</a>
+      <h3 class="text-lg font-semibold mb-3">Quick Links</h3>
+      <ul class="space-y-2 text-sm">
+        <li><a href="/about" class="hover:text-[#FFC107] transition">About Us</a></li>
+        <li><a href="/contact" class="hover:text-[#FFC107] transition">Contact Us</a></li>
+        <li><a href="/terms" class="hover:text-[#FFC107] transition">Terms & Conditions</a></li>
+        <li><a href="/privacy" class="hover:text-[#FFC107] transition">Privacy Policy</a></li>
+      </ul>
     </div>
+
+    <!-- Socials -->
     <div>
-      <a href="#" class="text-white text-decoration-none">Facebook</a><br>
-      <a href="#" class="text-white text-decoration-none">Instagram</a><br>
-      <a href="#" class="text-white text-decoration-none">Pinterest</a>
+      <h3 class="text-lg font-semibold mb-3">Follow Us</h3>
+      <div class="flex space-x-4 text-2xl">
+        <a href="#" class="hover:text-[#FFC107] transition"><i class="bi bi-facebook"></i></a>
+        <a href="#" class="hover:text-[#FFC107] transition"><i class="bi bi-instagram"></i></a>
+        <a href="#" class="hover:text-[#FFC107] transition"><i class="bi bi-twitter"></i></a>
+        <a href="#" class="hover:text-[#FFC107] transition"><i class="bi bi-pinterest"></i></a>
+      </div>
     </div>
+
+    <!-- Newsletter -->
+    <div>
+      <h3 class="text-lg font-semibold mb-3">Newsletter</h3>
+      <p class="text-sm opacity-90 mb-3">Subscribe to get the latest offers and updates.</p>
+      <form class="flex">
+        <input type="email" placeholder="Your email" class="px-3 py-2 rounded-l-md w-full text-black focus:outline-none">
+        <button type="submit" class="bg-[#FFC107] px-4 py-2 rounded-r-md hover:bg-yellow-500 transition">Subscribe</button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Bottom Line -->
+  <div class="border-t border-white/30 mt-10 pt-4 text-center text-sm opacity-80">
+    © 2025 The BlueSky Hotel. All Rights Reserved. | Designed with ❤️
   </div>
 </footer>

@@ -62,27 +62,58 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("email").addEventListener("keyup",checkEmail);
 });
 
+          function openModal(id) {
+            const el = document.getElementById(id);
+            const backdrop = document.getElementById("registrationBackdrop");
+            const panel = document.getElementById("registrationPanel");
 
-function showStep2() {
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
+            el.classList.remove("hidden");
+            document.body.classList.add("overflow-hidden");
 
-    step1.classList.add('fade-out');
-    setTimeout(() => {
-        step1.style.display = 'none';
-        step2.style.display = 'block';
-        step2.classList.add('fade-in');
-    }, 500);
-}
+            // trigger transition
+            requestAnimationFrame(() => {
+              backdrop.classList.remove("opacity-0");
+              panel.classList.remove("opacity-0", "scale-95");
+              panel.classList.add("opacity-100", "scale-100");
+            });
+            showStep1();
+          }
 
-function showStep1(){
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
+          function closeModal(id) {
+            const el = document.getElementById(id);
+            const backdrop = document.getElementById("registrationBackdrop");
+            const panel = document.getElementById("registrationPanel");
 
-    step1.classList.add('fade-out');
-    setTimeout(() => {
-            step1.style.display = 'block';
-            step2.style.display = 'none';
-            step1.classList.add('fade-in');
-    }, 500);
-}
+            // animate out
+            backdrop.classList.add("opacity-0");
+            panel.classList.add("opacity-0", "scale-95");
+            panel.classList.remove("opacity-100", "scale-100");
+
+            setTimeout(() => {
+              el.classList.add("hidden");
+              document.body.classList.remove("overflow-hidden");
+            }, 300); // match duration-300
+          }
+
+        function showStep2() {
+          document.getElementById("step1").classList.add("hidden");
+          document.getElementById("step2").classList.remove("hidden");
+
+          step1.classList.add('fade-out');
+              setTimeout(() => {
+                  step1.style.display = 'none';
+                  step2.style.display = 'block';
+                  step2.classList.add('fade-in');
+              }, 500);
+        }
+        function showStep1() {
+          document.getElementById("step2").classList.add("hidden");
+          document.getElementById("step1").classList.remove("hidden");
+
+          step1.classList.add('fade-out');
+              setTimeout(() => {
+                      step1.style.display = 'block';
+                      step2.style.display = 'none';
+                      step1.classList.add('fade-in');
+                }, 500);
+        }

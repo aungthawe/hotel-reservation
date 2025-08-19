@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zypher | Contact</title>
-    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
-    <link th:href="@{/css/homeStyle.css}" rel="stylesheet">
 
-</head>
-<body>
+<head th:replace="fragments/header :: siteHead"></head>
+
+<body class="relative antialiased overflow-x-hidden">
+
+<!-- Upper Left Floating Ball -->
+<div class="fixed top-1/6 left-1/4 -z-10 transform -translate-x-1/4 -translate-y-1/4" aria-hidden="true">
+    <div class="w-[35vw] h-[45vw] md:w-[35rem] md:h-[25rem] bg-[#18A0FB] rounded-full filter blur-3xl opacity-30"></div>
+</div>
+
+<!-- Lower Right Floating Ball -->
+<div class="fixed bottom-1/4 right-1/3 -z-10 transform translate-x-1/4 translate-y-1/4" aria-hidden="true">
+    <div class="w-[45vw] h-[40vw] md:w-[20rem] md:h-[30rem] bg-[#18A0FB] rounded-full filter blur-3xl opacity-30"></div>
+</div>
 
 <!-- Header -->
 <div th:replace="fragments/header :: header"></div>
@@ -17,7 +22,7 @@
 <div th:replace="fragments/common-fragment :: floatingAlerts"></div>
 
 <!-- Hero Section Carousel -->
-<div th:replace="fragments/header :: herocarousel"></div>
+<div th:replace="fragments/header :: heroSection"></div>
 
 <!--contact-->
 <div th:replace="fragments/common-fragment :: contact"></div>
@@ -27,6 +32,7 @@
 <div th:replace="fragments/footer :: footer"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/customAlert.js}"></script>
 <script src="/js/header.js"></script>
 <script src="/js/common.js"></script>
 </body>

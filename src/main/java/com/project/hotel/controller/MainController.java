@@ -142,11 +142,6 @@ public class MainController {
         return "redirect:/?logout=success";
     }
 
-    @GetMapping("/contact")
-    public String getContactPage() {
-        return "contact";
-    }
-
     @GetMapping("/terms")
     public String getTermsPage(){
         return "terms";
