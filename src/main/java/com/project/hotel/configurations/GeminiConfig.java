@@ -1,7 +1,7 @@
 package com.project.hotel.configurations;
 
-import com.google.api.client.util.Value;
 import com.google.genai.Client;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,10 +9,14 @@ import org.springframework.context.annotation.Configuration;
 public class GeminiConfig {
 
     @Value("${gemini.api.key}")
-    private String apikey;
+    private String apiKey;
 
     @Bean
-    public Client genAiClient(){
-        return Client.builder().apiKey(apikey).build();
+    public Client genAiClient() {
+
+        if (apiKey == null || apiKey.isEmpty()) {
+            throw new IllegalArgumentException("Gemini API key must be set in application.properties");
+        }
+        return new Client.Builder().apiKey(apiKey).build();
     }
 }
