@@ -7,7 +7,7 @@ This is a Spring Boot-based web application for managing hotel reservations, use
 FEATURES
 --------
 - ✔ Room search with filters (type, capacity, check-in and check-out dates) 
-
+-  ✔ Room search with gemini (No usable according to restriction on location)
 - ✔ Payment system using stored cards (with encryption and masking)
 - ✔ Reservation management (edit/cancel 2 days before check-in)
 - ✔ User roles: Manager, Customer, Staff

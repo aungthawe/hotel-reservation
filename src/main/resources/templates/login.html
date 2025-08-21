@@ -15,50 +15,49 @@
     <div class="w-[45vw] h-[40vw] md:w-[20rem] md:h-[30rem] bg-[#18A0FB] rounded-full filter blur-3xl opacity-30"></div>
 </div>
 
-<!-- Login -->
-<div class="container mx-auto mt-30 px-4">
-    <div th:replace="fragments/common-fragment :: floatingAlerts"></div>
-    <div class="flex justify-center">
-        <div class="w-full max-w-md">
-            <div class="bg-white/30 backdrop-blur-md rounded-3xl shadow-lg hover:shadow-2xl p-8 border border-gray-100">
-                <h3 class="text-center text-2xl font-bold text-[#18A0FB]">Login</h3>
-                <p class="text-center text-[#212529] mt-2">
-                    Enter your username and password to access your account.
-                </p>
+<div th:replace="fragments/common-fragment :: floatingAlerts"></div>
 
-                <!-- Error Message -->
-                <div th:if="${error}" class="mt-4 text-center">
-                    <p class="text-red-600 font-medium">Invalid username or password</p>
-                    <a th:href="@{/}" class="text-[#18A0FB] hover:underline">Back to Homepage</a>
+<!-- Login -->
+<div class="container mx-auto px-4 min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md">
+        <div class="bg-white/30 backdrop-blur-md rounded-3xl shadow-lg hover:shadow-2xl p-8 border border-gray-100">
+            <h3 class="text-center text-2xl font-bold text-[#18A0FB]">Login</h3>
+            <p class="text-center text-[#212529] mt-2">
+                Enter your username and password to access your account.
+            </p>
+
+            <!-- Error Message -->
+            <div th:if="${error}" class="mt-4 text-center">
+                <p class="text-red-600 font-medium">Invalid username or password</p>
+                <a th:href="@{/}" class="text-[#18A0FB] hover:underline">Back to Homepage</a>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" th:action="@{/users/login}" method="POST" class="mt-6 space-y-4">
+                <!-- Username -->
+                <div>
+                    <label for="username" class="block text-sm font-semibold text-[#212529]">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username"
+                           required
+                           class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-[#212529] shadow-sm focus:border-[#18A0FB] focus:ring focus:ring-[#18A0FB]/40 outline-none"/>
                 </div>
 
-                <!-- Login Form -->
-                <form id="loginForm" th:action="@{/users/login}" method="POST" class="mt-6 space-y-4">
-                    <!-- Username -->
-                    <div>
-                        <label for="username" class="block text-sm font-semibold text-[#212529]">Username</label>
-                        <input type="text" id="username" name="username" placeholder="Enter your username"
-                               required
-                               class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-[#212529] shadow-sm focus:border-[#18A0FB] focus:ring focus:ring-[#18A0FB]/40 outline-none"/>
-                    </div>
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block text-sm font-semibold text-[#212529]">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password"
+                           minlength="6" maxlength="16" required
+                           class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-[#212529] shadow-sm focus:border-[#18A0FB] focus:ring focus:ring-[#18A0FB]/40 outline-none"/>
+                </div>
 
-                    <!-- Password -->
-                    <div>
-                        <label for="password" class="block text-sm font-semibold text-[#212529]">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Enter your password"
-                               minlength="6" maxlength="16" required
-                               class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-[#212529] shadow-sm focus:border-[#18A0FB] focus:ring focus:ring-[#18A0FB]/40 outline-none"/>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="mt-6">
-                        <button type="submit" id="loginBtn"
-                                class="w-full py-2 rounded-xl bg-[#18A0FB] text-white font-semibold shadow hover:bg-[#0d8bdc] transition-colors">
-                            Login
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <!-- Submit Button -->
+                <div class="mt-6">
+                    <button type="submit" id="loginBtn"
+                            class="w-full py-2 rounded-xl bg-[#18A0FB] text-white font-semibold shadow hover:bg-[#0d8bdc] transition-colors">
+                        Login
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

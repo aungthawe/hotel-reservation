@@ -359,9 +359,44 @@
                 </div>
 
                 <div th:object="${customer}">
-                  <div class="mb-3">
-                    <label class="form-label">NRC</label>
-                    <input type="text" name="nrc" th:value="${nrc}" class="form-control" placeholder="Enter NRC" required />
+                  <div class="row g-2 mb-3">
+                    <!-- State/Region Code -->
+                    <div class="col-3">
+                      <select name="stateCode" class="form-control" required>
+                        <option value="">State</option>
+                        <option th:each="i : ${#numbers.sequence(1,14)}"
+                                th:value="${i}"
+                                th:text="${i < 10 ? '0' + i : i}">
+                        </option>
+                      </select>
+                    </div>
+
+                    <!-- Township -->
+                    <div class="col-4">
+                      <select name="township" class="form-control" required>
+                        <option value="">Township</option>
+                        <option value="KaTaNa">KaTaNa</option>
+                        <option value="LaKaNa">LaKaNa</option>
+                        <option value="SaPaBa">SaPaBa</option>
+                        <!-- add more short names -->
+                      </select>
+                    </div>
+
+                    <!-- Citizen Type -->
+                    <div class="col-2">
+                      <select name="citizenType" class="form-control" required>
+                        <option value="">Type</option>
+                        <option value="N">(N)</option>
+                        <option value="E">(E)</option>
+                        <option value="P">(P)</option>
+                      </select>
+                    </div>
+
+                    <!-- NRC Number -->
+                    <div class="col-3">
+                      <input type="text" name="nrcNumber" maxlength="6" pattern="\d{6}"
+                             class="form-control" placeholder="123456" required>
+                    </div>
                   </div>
 
                   <div class="mb-3">

@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Controller
-@RestController("/gemini")
+@RequestMapping("/gemini")
 public class GeminiController {
 
     @Autowired
@@ -44,15 +45,15 @@ public class GeminiController {
 
                 List<Room> results = roomService.findAvailableRooms(roomType,capacity,checkinDate,checkoutDate);
                 model.addAttribute("geminiAnswer",textAnswer);
-                model.addAttribute("geminiRooms",results);
+                model.addAttribute("searchResults",results);
             }catch (java.time.format.DateTimeParseException e) {
                 model.addAttribute("geminiAnswer", "Sorry, there was an issue processing the dates. Please try a different date format.");
-                model.addAttribute("geminiRooms", Collections.emptyList());
+                model.addAttribute("searchResults", Collections.emptyList());
             }
 
             return "index";
         } catch (Exception e) {
-            model.addAttribute("error","Sorry, We have error in generating room base on your input !!");
+            model.addAttribute("error","Sorry, We have error in generating room base on your input !!<br>"+e.getMessage());
             return "index";
         }
     }

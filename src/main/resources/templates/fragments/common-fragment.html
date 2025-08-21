@@ -57,15 +57,66 @@
     </form>
 </section>
 
+<!-- Gemini AI Search -->
+<section th:fragment="gemini-search"
+         class="relative py-10 white/20 backdrop-blur-md overflow-hidden">
+
+    <!-- Container -->
+    <div class="relative container mx-auto px-6 max-w-3xl">
+        <!-- Background Star -->
+        <i class="bi bi-stars absolute text-[170px] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent -top-5 -left-10 z-0"></i>
+
+        <!-- Heading -->
+        <div class="text-center mb-10">
+            <h2 class="text-4xl font-extrabold tracking-tight text-[#212529]">Ask Gemini AI</h2>
+            <p class="text-gray-600 mt-2">Your AI-powered assistant to discover the perfect room</p>
+        </div>
+
+        <!-- Glassmorphic Box -->
+<!--        <div class="backdrop-blur-xl bg-white/50 border border-gray-200 rounded-3xl shadow-md p-2 transition-transform transform hover:-translate-y-1 hover:shadow-xl">-->
+        <div class="bg-white/2 p-3 transition-transform transform hover:-translate-y-1">
+            <form th:action="@{/gemini/ask}" method="get" class="flex flex-col sm:flex-row items-center gap-4">
+
+                <!-- Input -->
+                <input type="text"
+                       name="userinput"
+                       placeholder="✨ Ask me: 'Which rooms are best for honeymoon under $250?'"
+                       required
+                       class="flex-1 px-2 py-4 rounded-3xl bg-white/40 border border-gray-300 text-gray-700
+                      placeholder-gray-400 focus:ring-2 focus:ring-cyan-400 outline-none shadow-sm">
+
+                <!-- Gradient Button -->
+                <button type="submit"
+                        class="px-6 py-4 rounded-3xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500
+                       text-white font-bold shadow-lg hover:shadow-cyan-400/50 hover:scale-105 transition-transform">
+                    <i class="bi bi-stars me-2"></i> Ask Gemini
+                </button>
+            </form>
+
+            <!-- Example Prompts -->
+            <div class="mt-6 text-center text-sm text-gray-600">
+                <p>💡 Try asking: <span class="italic">“Find me a deluxe suite with ocean view”</span></p>
+                <p>🤖 Gemini will analyze and recommend instantly</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
 <!-- Search Results -->
 <section id="search-result-section" th:fragment="searchResult" th:if="${searchResults}" class="py-16 relative">
     <div class="container mx-auto px-6 lg:px-12">
 
         <!-- Header Section -->
         <div class="flex flex-col md:flex-row justify-between items-center mb-10">
-            <div>
+            <div th:unless="${geminiAnswer}">
                 <h2 class="text-2xl md:text-3xl font-bold text-[#212529]">Your desire rooms, for any vacation!</h2>
                 <p class="text-[#212529]/70">Escape the ordinary and embrace paradise with our exclusive Beach Bliss package!</p>
+            </div>
+            <div th:if="${geminiAnswer}">
+                <h2 class="text-2xl md:text-3xl font-bold text-[#212529]">Your desire rooms, for any vacation!</h2>
+                <p class="text-[#212529]/70" th:text="${geminiAnswer}"></p>
             </div>
             <div class="mt-4 md:mt-0">
         <span class="inline-block px-4 py-2 rounded-full bg-[#18A0FB] text-white font-semibold shadow-sm"

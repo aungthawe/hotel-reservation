@@ -51,7 +51,7 @@ public class AccountController {
         }
         User user = userService.findUserByUsername(username);
         Customer customer = userService.findCustomerByUserId(user.getId());
-        String decryptedNrc;
+        String decryptedNrc = "No NRC";
 
         List<Reservation> reservations = reservationService.getReservationByCustomer(customer);
         Map<Long, Boolean> editableMap = new HashMap<>();
@@ -65,7 +65,8 @@ public class AccountController {
                 decryptedNrc = encryptionUtil.decrypt(customer.getNrc());
             }else decryptedNrc = "No nrc";
         } catch (Exception e) {
-            throw new RuntimeException("NRC decryption fail:"+e.getMessage());
+            model.addAttribute("error","NRC decryption fail:"+e.getMessage());
+            return "error";
         }
 
         model.addAttribute("user", user);
@@ -118,10 +119,16 @@ public class AccountController {
     public String updateAccount(
             @ModelAttribute("user") User updatedUser,
             @ModelAttribute("customer") Customer updatedCustomer,
-            @RequestParam("nrc") String nrc,
+            @RequestParam("stateCode") String stateCode,
+            @RequestParam("township") String township,
+            @RequestParam("citizenType") String citizenType,
+            @RequestParam("nrcNumber") String nrcNumber,
             HttpServletRequest request,
             RedirectAttributes redirectAttributes, Model model
     ) {
+
+        String nrc = stateCode + "/" + township + "(" + citizenType + ")" + nrcNumber;
+
        User user = userService.findUserByUsername(MainController.getCookieValue(request,"username"));
         Customer customer = userService.findCustomerByUserId(user.getId());
 
