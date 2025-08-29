@@ -69,30 +69,13 @@ public class MainController {
 
             User user = userService.findUserByUsername(username);
 
-            //dto that created in login state
-//            UserProfileDto dto =(UserProfileDto) session.getAttribute("currentUser");
-//
-//            if (dto == null) {
-//                // First time: create new DTO
-//                dto = new UserProfileDto(user.getName(), user.getImagePath());
-//                session.setAttribute("currentUser",dto);
-//
-//            } else {
-//                // Update existing DTO
-//                dto.setDisplayName(user.getName());
-//                dto.setImagePath(user.getImagePath());
-//            }
-
             // Check if customer data exists
             Customer customer = userService.findCustomerByUserId(user.getId());
             if (customer != null) {
                 session.setAttribute("123nrc", customer.getNrc());
                 session.setAttribute("123address", customer.getAddress());
             }
-            // Store user details in session
-//            session.setAttribute("123phone", user.getPhone());
-//            session.setAttribute("username199", username);
-//            session.setAttribute("usercookierole", role);
+
             model.addAttribute("scrollTo",redirectAttributes.getAttribute("scrollTo"));
 
             if (RoleConstants.MANAGER.equals(role)) {
@@ -159,10 +142,10 @@ public class MainController {
     @PostMapping("/review/submit")
     public String submitReview(@RequestParam("stars") Integer stars,
                                @RequestParam("content") String content,
-                               HttpSession session,
+                               HttpServletRequest request,
                                RedirectAttributes redirectAttributes) {
 
-        User user = userService.findUserByUsername((String)session.getAttribute("username199"));
+        User user = userService.findUserByUsername(MainController.getCookieValue(request,"username"));
         if (user == null) {
             redirectAttributes.addFlashAttribute("error", "You must be logged in to submit a review.");
             return "redirect:/login";

@@ -99,6 +99,14 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
     scrollIfReady();
+
+    const reviews = document.querySelectorAll(".review-card");
+        reviews.forEach((card, i) => {
+          setTimeout(() => {
+            card.classList.remove("opacity-0", "translate-y-6");
+            card.classList.add("opacity-100", "translate-y-0");
+          }, i * 200); // stagger animation (200ms delay each)
+        });
   });
 
 document.getElementById("loginBtn").addEventListener("click", function () {

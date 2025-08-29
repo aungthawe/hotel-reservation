@@ -261,7 +261,7 @@
 </section>
 
 <!-- Reviews -->
-<section th:fragment="reviews" class="py-16 relative">
+<section th:fragment="reviews" class="py-16">
     <div class="container mx-auto px-6 lg:px-12">
         <!-- Section Header -->
         <h2 class="text-center text-3xl md:text-4xl font-bold text-gradient mb-10">
@@ -269,27 +269,27 @@
         </h2>
 
         <!-- Reviews Grid -->
-        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 justify-center">
 
             <!-- Review Card -->
             <div th:each="reviews : ${session.reviews}"
                  th:attr="data-id=${reviews.reviewId}"
-                 class="review-card opacity-0 translate-y-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 relative">
+                 class="review-card opacity-100 translate-y-0 bg-white/60 backdrop-blur-md rounded-2xl shadow-md hover:shadow-lg transition p-6 relative border border-white/20">
 
                 <!-- Top Row: Avatar + Name + Role -->
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-3">
-                        <img src="/images/user.png"
+                        <img src="/images/user-icon.png"
                              alt="Client"
-                             class="w-12 h-12 rounded-full shadow-md object-cover"/>
+                             class="w-12 h-12 rounded-full shadow-md object-cover border border-cyan-200/40"/>
                         <div>
-                            <h5 class="text-lg font-semibold text-[#212529]" th:text="${reviews.user.name}"></h5>
-                            <p class="text-sm text-gray-500" th:text="${reviews.user.role}"></p>
+                            <h5 class="text-lg font-semibold text-gray-900" th:text="${reviews.user.name}"></h5>
+                            <p class="text-sm text-cyan-600/80" th:text="${reviews.user.role}"></p>
                         </div>
                     </div>
 
                     <!-- Admin Delete Button -->
-                    <button class="text-red-500 hover:text-red-700 transition"
+                    <button class="text-red-400 hover:text-red-600 transition"
                             th:if="${isadmin}"
                             th:attr="onclick='deleteReview(' + ${reviews.reviewId} + ')'">
                         <i class="fas fa-trash"></i>
@@ -298,14 +298,16 @@
 
                 <!-- Rating Stars -->
                 <div class="flex items-center mb-3">
-          <span th:each="i : ${#numbers.sequence(1, reviews.stars)}"
-                class="text-[#FFC107] text-lg">&#9733;</span>
+                    <span th:each="i : ${#numbers.sequence(1, reviews.stars)}"
+                  class="text-yellow-400 text-lg drop-shadow-sm">&#9733;</span>
                 </div>
 
                 <!-- Review Content -->
-                <p class="text-gray-700 leading-relaxed" th:text="${reviews.content}"></p>
+                <p class="text-gray-800 leading-relaxed" th:text="${reviews.content}"></p>
             </div>
+
         </div>
+
     </div>
 </section>
 

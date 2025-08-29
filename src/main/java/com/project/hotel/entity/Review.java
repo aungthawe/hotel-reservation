@@ -22,7 +22,7 @@ public class Review {
     @Column(name = "reviewdate")
     private LocalDate reviewDate;
 
-    private  Integer stars;
+    private int  stars;
 
     public void setReviewId(Long reviewId) {
         this.reviewId = reviewId;
